@@ -1,5 +1,7 @@
 package tela;
 
+import logica.Controlador;
+
 import java.awt.Color;
 import java.awt.Dialog.ModalExclusionType;
 import java.awt.FlowLayout;
@@ -59,9 +61,13 @@ public class Principal extends JFrame {
 	private JLabel lblMaravilha;
 	private JProgressBar pbMaravilha;
 
+	private Controlador controlador;
+	public static Principal instancia;
+
 	public static void main(String[] args) {
 		SwingUtilities.invokeLater(() -> {
 			Principal window = new Principal();
+			Principal.instancia = window;
 			window.setVisible(true);
 		});
 	}
@@ -73,9 +79,10 @@ public class Principal extends JFrame {
 		String[] civilizacoes = {"Acádia", "Babilônia", "Helenística", "Mesopotâmica", "Persa", "Suméria"};
         String civilizacao = (String) JOptionPane.showInputDialog(null, "Escolha sua civilização", "Jogador", JOptionPane.QUESTION_MESSAGE, null, civilizacoes, civilizacoes[0]);
         this.lblJogador.setText(nome +" - "+ civilizacao);
+		this.controlador = new Controlador(this);
 		//********************************************************************
 		//*** Testar - Depois pode apagar ************************************
-		this.testar();
+//		this.testar();
 		//********************************************************************
 	}
 
@@ -451,28 +458,28 @@ public class Principal extends JFrame {
 	//************************************************************************
 	//*** Testar - Depois pode apagar ****************************************
 	//************************************************************************
-	public void testar() {
-		this.adicionarAldeao("1", "fazendo nada");
-		this.mostrarAldeao(1, "continua fazendo nada");
-		this.adicionarFazenda("1", "aaaa");
-		this.mostrarFazenda(1, "bbbb");
-		this.mostrarComida(111);
-		this.adicionarMinaOuro("1", "cccc");
-		this.mostrarMinaOuro(1, "dddd");
-		this.mostrarOuro(222);
-		this.mostrarOferendaFe(333);
-		this.mostrarPrefeitura("eeee", Color.ORANGE);
-		this.habilitarTemplo();
-		this.habilitarMaravilha();
-		this.mostrarMaravilha(444);
-		List<String> evolucoes = new ArrayList<String>();
-		evolucoes.add("NUVEM_GAFANHOTOS");
-		evolucoes.add("MORTE_PRIMOGENITOS");
-		evolucoes.add("CHUVA_PEDRAS"); 
-		this.mostrarAtaques(evolucoes);
-		this.mostrarTemplo("ffff", Color.MAGENTA);
-
-	}
+//	public void testar() {
+//		this.adicionarAldeao("1", "fazendo nada");
+//		this.mostrarAldeao(1, "continua fazendo nada");
+//		this.adicionarFazenda("1", "aaaa");
+//		this.mostrarFazenda(1, "bbbb");
+//		this.mostrarComida(111);
+//		this.adicionarMinaOuro("1", "cccc");
+//		this.mostrarMinaOuro(1, "dddd");
+//		this.mostrarOuro(222);
+//		this.mostrarOferendaFe(333);
+//		this.mostrarPrefeitura("eeee", Color.ORANGE);
+//		this.habilitarTemplo();
+//		this.habilitarMaravilha();
+//		this.mostrarMaravilha(444);
+//		List<String> evolucoes = new ArrayList<String>();
+//		evolucoes.add("NUVEM_GAFANHOTOS");
+//		evolucoes.add("MORTE_PRIMOGENITOS");
+//		evolucoes.add("CHUVA_PEDRAS");
+//		this.mostrarAtaques(evolucoes);
+//		this.mostrarTemplo("ffff", Color.MAGENTA);
+//
+//	}
 	//************************************************************************
 	//************************************************************************
 	//************************************************************************
@@ -554,9 +561,9 @@ public class Principal extends JFrame {
 		this.cbTemploLancamentos.removeAllItems();
 		for (String evolucao : evolucoes) {
 			switch (evolucao) {
-			case "NUVEM_GAFANHOTOS":	this.cbTemploLancamentos.addItem("Nuvem de gafanhotos");	break;
-			case "MORTE_PRIMOGENITOS":	this.cbTemploLancamentos.addItem("Morte dos primogênitos");	break;
-			case "CHUVA_PEDRAS": 		this.cbTemploLancamentos.addItem("Chuva de pedras");
+				case "NUVEM_GAFANHOTOS" -> this.cbTemploLancamentos.addItem("Nuvem de gafanhotos");
+				case "MORTE_PRIMOGENITOS" -> this.cbTemploLancamentos.addItem("Morte dos primogênitos");
+				case "CHUVA_PEDRAS" -> this.cbTemploLancamentos.addItem("Chuva de pedras");
 			}
 		}
 	}
@@ -572,46 +579,46 @@ public class Principal extends JFrame {
 		if (aldeao == -1)
 			mostrarMensagemErro("Erro", "Escolha um aldeão");
 		else
-			System.out.println("comandoAldeaoParar(aldeao);");
+			this.controlador.vila.comandoAldeaoPara(aldeao+1);
 	}
 
 	public void comandoAldeaoConstruir(int aldeao, String qual) {
 		if (aldeao == -1)
 			mostrarMensagemErro("Erro", "Escolha um aldeão");
 		else
-			System.out.println("comandoAldeaoConstruir(aldeao, qual);");
+			this.controlador.vila.comandoAldeaoContruir(aldeao+1, qual);
 	}
 
 	public void comandoAldeaoCultivar(int aldeao, int numeroFazenda) {
 		if (aldeao == -1)
 			mostrarMensagemErro("Erro", "Escolha um aldeão");
 		else
-			System.out.println("comandoAldeaoCultivar(aldeao, numeroFazenda);");
+			this.controlador.vila.comandoAldeaoCultivar(aldeao+1, numeroFazenda);
 	}
 
 	public void comandoAldeaoMinerar(int aldeao, int numeroMinaOuro) {
 		if (aldeao == -1)
 			mostrarMensagemErro("Erro", "Escolha um aldeão");
 		else
-			System.out.println("comandoAldeaoMinerar(aldeao, numeroMinaOuro);");
+			this.controlador.vila.comandoAldeaoMinerar(aldeao+1, numeroMinaOuro);
 	}
 
 	public void comandoAldeaoOrar(int aldeao) {
 		if (aldeao == -1)
 			mostrarMensagemErro("Erro", "Escolha um aldeão");
 		else
-			System.out.println("comandoAldeaoOrar(aldeao);");
+			this.controlador.vila.comandoAldeaoOrar(aldeao+1);
 	}
 
 	public void comandoAldeaoSacrificar(int aldeao) {
 		if (aldeao == -1)
 			mostrarMensagemErro("Erro", "Escolha um aldeão");
 		else
-			System.out.println("comandoAldeaoSacrificar(aldeao);");
+			this.controlador.vila.comandoAldeaoSacrificar(aldeao+1);
 	}
 
 	public void comandoPrefeituraCriarAldeao() {
-		System.out.println("comandoPrefeituraCriarAldeao();");
+		this.controlador.vila.criarAldeao();
 	}
 
 	public void comandoPrefeituraEvoluir(String strEvolucao) {
