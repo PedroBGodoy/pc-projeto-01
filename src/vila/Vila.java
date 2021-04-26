@@ -1,98 +1,133 @@
 package vila;
 
-import logica.Constantes;
-import tela.Principal;
+import propriedades.Propriedades;
+import tela.Tela;
 
 import java.awt.*;
 import java.util.ArrayList;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
 
 public class Vila {
-    private ArrayList<Aldeao> aldeaos = new ArrayList<>();
+    private ArrayList<Aldeao> aldeaos;
+    private ArrayList<Fazenda> fazendas;
+    private EstadoVila estado;
+    private int comida;
+    private int ouro;
 
-    private Lock parideira;
+    public Propriedades props;
 
     public Vila() {
-        this.parideira = new ReentrantLock();
+        this.estado = EstadoVila.PARADA;
+        this.aldeaos = new ArrayList<>();
+        this.fazendas = new ArrayList<>();
+
+        this.props = new Propriedades();
+
+        this.atualizarComida(1000);
+        this.atualizarOuro(1000);
     }
 
-    public void criarAldeao() {
-        new Thread(() -> {
-            this.parideira.lock();
-            Principal.instancia.mostrarPrefeitura("criando aldeão", Color.YELLOW);
-            try {
-                Thread.sleep(2 * Constantes.HORA_BASE);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-            this.callbackCriarAldeao(aldeaos.size()+1);
-            this.parideira.unlock();
-        }).start();
+    private void parar() {
+        Tela.i.mostrarPrefeitura("parada", Color.WHITE);
+        this.estado = EstadoVila.PARADA;
     }
 
-    public void callbackCriarAldeao(int id) {
-        Aldeao aldeao = new Aldeao(id);
-        aldeaos.add(aldeao);
-        Principal.instancia.adicionarAldeao(Integer.toString(aldeao.getId()), "parado");
-        Principal.instancia.mostrarPrefeitura("parada", Color.WHITE);
-    }
-
-    public void comandoAldeaoPara(int id) {
-        Aldeao aldeao = this.getAldeaoByID(id);
-        aldeao.parar();
-        this.atualizarStatusAldeao(aldeao);
-    }
-
-    public void comandoAldeaoContruir(int id, String qual) {
-        Aldeao aldeao = this.getAldeaoByID(id);
-        aldeao.construir();
-        this.atualizarStatusAldeao(aldeao, qual);
-    }
-
-    public void comandoAldeaoCultivar(int id, int numeroFazenda) {
-        Aldeao aldeao = this.getAldeaoByID(id);
-        aldeao.cultivar();
-        this.atualizarStatusAldeao(aldeao, Integer.toString(numeroFazenda));
-    }
-
-    public void comandoAldeaoMinerar(int id, int numeroMina) {
-        Aldeao aldeao = this.getAldeaoByID(id);
-        aldeao.minerar();
-        this.atualizarStatusAldeao(aldeao, Integer.toString(numeroMina));
-    }
-
-    public void comandoAldeaoOrar(int id) {
-        Aldeao aldeao = this.getAldeaoByID(id);
-        aldeao.orar();
-        this.atualizarStatusAldeao(aldeao);
-    }
-
-    public void comandoAldeaoSacrificar(int id) {
-        Aldeao aldeao = this.getAldeaoByID(id);
-        aldeao.sacrificar();
-        this.atualizarStatusAldeao(aldeao);
-    }
-
-    private void atualizarStatusAldeao(Aldeao aldeao) {
-        this.atualizarStatusAldeao(aldeao, "");
-    }
-
-    private void atualizarStatusAldeao(Aldeao aldeao, String identificador) {
-        switch (aldeao.getEstado()) {
-            case MINERANDO -> Principal.instancia.mostrarAldeao(aldeao.getId(), "minerando ouro na mina " + identificador);
-            case ORANDO -> Principal.instancia.mostrarAldeao(aldeao.getId(), "orando");
-            case CULTIVANDO -> Principal.instancia.mostrarAldeao(aldeao.getId(), "cultivando fazenda " + identificador);
-            case CONSTRUINDO -> Principal.instancia.mostrarAldeao(aldeao.getId(), "construindo " + identificador);
-            case PARADO -> Principal.instancia.mostrarAldeao(aldeao.getId(), "parado");
-            case SACRIFICADO -> Principal.instancia.mostrarAldeao(aldeao.getId(), "sacrificado");
+    private void produzirAldeao() {
+        if(this.comida < this.props.aldeao.getCustoComida() || this.comida < this.props.aldeao.getCustoOuro()) {
+            Tela.i.mostrarMensagemErro("Alerta Vila", "Recursos insuficientes!");
+            this.parar();
+            return;
         }
+        this.atualizarComida(-this.props.aldeao.getCustoComida());
+        this.atualizarOuro(-this.props.aldeao.getCustoOuro());
+
+        this.estado = EstadoVila.PRODUZINDO_ALDEAO;
+        Tela.i.mostrarPrefeitura("produzindo aldeao", Color.YELLOW);
+        try {
+            Thread.sleep(this.props.aldeao.getTempoConstrucao());
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        Aldeao novoAldeao = new Aldeao(this.aldeaos.size()+1, this);
+        novoAldeao.start();
+        aldeaos.add(novoAldeao);
+        Tela.i.adicionarAldeao(String.valueOf(novoAldeao.getID()), "parado");
+        this.parar();
     }
 
-    private Aldeao getAldeaoByID(int id) {
-        return aldeaos.stream()
-                .filter(aldeao -> aldeao.getId() == id)
-                .findFirst()
-                .get();
+    private void evoluir() {
+        Tela.i.mostrarMensagemErro("Vila", "Ainda não implementado");
     }
+
+    public void comandoCriarAldeao() {
+        if(this.estado != EstadoVila.PARADA) return;
+        new Thread(this::produzirAldeao).start();
+    }
+
+    public void comandoAldeaoParar(int idAldeao) {
+        Aldeao aldeao = this.buscarAldeaoPorID(idAldeao);
+        AcaoAldeao acao = new AcaoAldeao(TipoAcaoAldeao.PARAR, 0);
+        aldeao.adicionarTarefa(acao);
+    }
+
+    public void comandoAldeaoConstruir(int idAldeao, String estrutura) {
+        Aldeao aldeao = this.buscarAldeaoPorID(idAldeao);
+        AcaoAldeao acao = new AcaoAldeao(TipoAcaoAldeao.CONSTRUIR, estrutura);
+        aldeao.adicionarTarefa(acao);
+    }
+
+    public void comandoAldeaoCultivar(int idAldeao, int numeroFazenda) {
+        Aldeao aldeao = this.buscarAldeaoPorID(idAldeao);
+        AcaoAldeao acao = new AcaoAldeao(TipoAcaoAldeao.CULTIVAR, numeroFazenda);
+        aldeao.adicionarTarefa(acao);
+    }
+
+    public void comandoAldeaoMinerar(int idAldeao, int numeroMina) {
+        Aldeao aldeao = this.buscarAldeaoPorID(idAldeao);
+        AcaoAldeao acao = new AcaoAldeao(TipoAcaoAldeao.MINERAR, numeroMina);
+        aldeao.adicionarTarefa(acao);
+    }
+
+    public void comandoAldeaoOrar(int idAldeao) {
+        Aldeao aldeao = this.buscarAldeaoPorID(idAldeao);
+        AcaoAldeao acao = new AcaoAldeao(TipoAcaoAldeao.ORAR, 1000);
+        aldeao.adicionarTarefa(acao);
+    }
+
+    public void comandoAldeaoSacrificar(int idAldeao) {
+        Aldeao aldeao = this.buscarAldeaoPorID(idAldeao);
+        AcaoAldeao acao = new AcaoAldeao(TipoAcaoAldeao.SACRIFICAR, 1000);
+        aldeao.adicionarTarefa(acao);
+    }
+
+    public void adicionarFazenda() {
+        Fazenda fazenda = new Fazenda(this.fazendas.size()+1, this);
+        this.fazendas.add(fazenda);
+    }
+
+    public void atualizarOuro(int diferenca) {
+        this.ouro += diferenca;
+        Tela.i.mostrarOuro(this.ouro);
+    }
+
+    public void atualizarComida(int diferenca) {
+        this.comida += diferenca;
+        Tela.i.mostrarComida(this.comida);
+    }
+
+    private Aldeao buscarAldeaoPorID(int idAldeao) {
+        return this.aldeaos
+                .stream()
+                .filter(aldeao -> aldeao.getID() == idAldeao)
+                .findFirst()
+                .orElse(null);
+    }
+
+    public Fazenda buscarFazendaPorID(int idFazenda) {
+        return this.fazendas
+                .stream()
+                .filter(fazenda -> fazenda.getID() == idFazenda)
+                .findFirst()
+                .orElse(null);
+    }
+
 }

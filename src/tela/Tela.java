@@ -1,6 +1,6 @@
 package tela;
 
-import logica.Controlador;
+import vila.Vila;
 
 import java.awt.Color;
 import java.awt.Dialog.ModalExclusionType;
@@ -34,7 +34,7 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import java.awt.Toolkit;
 
-public class Principal extends JFrame {
+public class Tela extends JFrame {
 	private static final long serialVersionUID = 1L;
 	private JLabel lblJogador;
 	private JTable tblAldeoes;
@@ -61,25 +61,27 @@ public class Principal extends JFrame {
 	private JLabel lblMaravilha;
 	private JProgressBar pbMaravilha;
 
-	private Controlador controlador;
-	public static Principal instancia;
+	private Vila vila;
+
+	// Singleton da Tela
+	public static Tela i;
 
 	public static void main(String[] args) {
 		SwingUtilities.invokeLater(() -> {
-			Principal window = new Principal();
-			Principal.instancia = window;
+			Tela window = new Tela();
 			window.setVisible(true);
 		});
 	}
 
-	public Principal() {
-		setIconImage(Toolkit.getDefaultToolkit().getImage(Principal.class.getResource("/tela/img/icone.png")));
+	public Tela() {
+		Tela.i = this;
+		setIconImage(Toolkit.getDefaultToolkit().getImage(Tela.class.getResource("/tela/img/icone.png")));
 		initialize();
         String nome = JOptionPane.showInputDialog(null, "Informe seu nome", "Jogador", JOptionPane.QUESTION_MESSAGE);
 		String[] civilizacoes = {"Acádia", "Babilônia", "Helenística", "Mesopotâmica", "Persa", "Suméria"};
         String civilizacao = (String) JOptionPane.showInputDialog(null, "Escolha sua civilização", "Jogador", JOptionPane.QUESTION_MESSAGE, null, civilizacoes, civilizacoes[0]);
         this.lblJogador.setText(nome +" - "+ civilizacao);
-		this.controlador = new Controlador(this);
+		this.vila = new Vila();
 		//********************************************************************
 		//*** Testar - Depois pode apagar ************************************
 //		this.testar();
@@ -377,7 +379,7 @@ public class Principal extends JFrame {
 
 		this.lblMaravilha = new JLabel();
 		this.lblMaravilha.setBounds(10, 20, 215, 170);
-		this.lblMaravilha.setIcon(new ImageIcon(Principal.class.getResource("/tela/img/maravilha.png")));
+		this.lblMaravilha.setIcon(new ImageIcon(Tela.class.getResource("/tela/img/maravilha.png")));
 		this.lblMaravilha.setEnabled(false);
 		this.pnMaravilha.add(this.lblMaravilha);
 
@@ -458,28 +460,28 @@ public class Principal extends JFrame {
 	//************************************************************************
 	//*** Testar - Depois pode apagar ****************************************
 	//************************************************************************
-//	public void testar() {
-//		this.adicionarAldeao("1", "fazendo nada");
-//		this.mostrarAldeao(1, "continua fazendo nada");
-//		this.adicionarFazenda("1", "aaaa");
-//		this.mostrarFazenda(1, "bbbb");
-//		this.mostrarComida(111);
-//		this.adicionarMinaOuro("1", "cccc");
-//		this.mostrarMinaOuro(1, "dddd");
-//		this.mostrarOuro(222);
-//		this.mostrarOferendaFe(333);
-//		this.mostrarPrefeitura("eeee", Color.ORANGE);
-//		this.habilitarTemplo();
-//		this.habilitarMaravilha();
-//		this.mostrarMaravilha(444);
-//		List<String> evolucoes = new ArrayList<String>();
-//		evolucoes.add("NUVEM_GAFANHOTOS");
-//		evolucoes.add("MORTE_PRIMOGENITOS");
-//		evolucoes.add("CHUVA_PEDRAS");
-//		this.mostrarAtaques(evolucoes);
-//		this.mostrarTemplo("ffff", Color.MAGENTA);
-//
-//	}
+	public void testar() {
+		this.adicionarAldeao("1", "fazendo nada");
+		this.mostrarAldeao(1, "continua fazendo nada");
+		this.adicionarFazenda("1", "aaaa");
+		this.mostrarFazenda(1, "bbbb");
+		this.mostrarComida(111);
+		this.adicionarMinaOuro("1", "cccc");
+		this.mostrarMinaOuro(1, "dddd");
+		this.mostrarOuro(222);
+		this.mostrarOferendaFe(333);
+		this.mostrarPrefeitura("eeee", Color.ORANGE);
+		this.habilitarTemplo();
+		this.habilitarMaravilha();
+		this.mostrarMaravilha(444);
+		List<String> evolucoes = new ArrayList<String>();
+		evolucoes.add("NUVEM_GAFANHOTOS");
+		evolucoes.add("MORTE_PRIMOGENITOS");
+		evolucoes.add("CHUVA_PEDRAS");
+		this.mostrarAtaques(evolucoes);
+		this.mostrarTemplo("ffff", Color.MAGENTA);
+
+	}
 	//************************************************************************
 	//************************************************************************
 	//************************************************************************
@@ -579,46 +581,46 @@ public class Principal extends JFrame {
 		if (aldeao == -1)
 			mostrarMensagemErro("Erro", "Escolha um aldeão");
 		else
-			this.controlador.vila.comandoAldeaoPara(aldeao+1);
+			this.vila.comandoAldeaoParar(aldeao+1);
 	}
 
 	public void comandoAldeaoConstruir(int aldeao, String qual) {
 		if (aldeao == -1)
 			mostrarMensagemErro("Erro", "Escolha um aldeão");
 		else
-			this.controlador.vila.comandoAldeaoContruir(aldeao+1, qual);
+			this.vila.comandoAldeaoConstruir(aldeao+1, qual);
 	}
 
 	public void comandoAldeaoCultivar(int aldeao, int numeroFazenda) {
 		if (aldeao == -1)
 			mostrarMensagemErro("Erro", "Escolha um aldeão");
 		else
-			this.controlador.vila.comandoAldeaoCultivar(aldeao+1, numeroFazenda);
+			this.vila.comandoAldeaoCultivar(aldeao+1, numeroFazenda+1);
 	}
 
 	public void comandoAldeaoMinerar(int aldeao, int numeroMinaOuro) {
 		if (aldeao == -1)
 			mostrarMensagemErro("Erro", "Escolha um aldeão");
 		else
-			this.controlador.vila.comandoAldeaoMinerar(aldeao+1, numeroMinaOuro);
+			this.vila.comandoAldeaoMinerar(aldeao+1, numeroMinaOuro+1);
 	}
 
 	public void comandoAldeaoOrar(int aldeao) {
 		if (aldeao == -1)
 			mostrarMensagemErro("Erro", "Escolha um aldeão");
 		else
-			this.controlador.vila.comandoAldeaoOrar(aldeao+1);
+			this.vila.comandoAldeaoOrar(aldeao+1);
 	}
 
 	public void comandoAldeaoSacrificar(int aldeao) {
 		if (aldeao == -1)
 			mostrarMensagemErro("Erro", "Escolha um aldeão");
 		else
-			this.controlador.vila.comandoAldeaoSacrificar(aldeao+1);
+			this.vila.comandoAldeaoSacrificar(aldeao+1);
 	}
 
 	public void comandoPrefeituraCriarAldeao() {
-		this.controlador.vila.criarAldeao();
+		this.vila.comandoCriarAldeao();
 	}
 
 	public void comandoPrefeituraEvoluir(String strEvolucao) {
