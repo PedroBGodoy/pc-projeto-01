@@ -9,7 +9,7 @@ public class Constantes {
     /**
      * Representa 1 hora em jogo. Valor definido em milisegundos (ms)
      */
-    public static final int HORA_BASE = 500;
+    public static final int HORA_BASE = 100;
 
     // ALDEAO
     public static final int TEMPO_PRODUCAO_ALDEAO_MULT = 20;
@@ -26,9 +26,10 @@ public class Constantes {
     public static final int PRODUCAO_FAZENDA_CICLO = 10;
 
     // MINA
-    public static final int TEMPO_CONSTRUCAO_MINA_MULT = 30;
-    public static final int TEMPO_USO_MINA_MULT = 1;
-    public static final int TEMPO_TRANSPORTE_MINA_MULT = 2;
-    public static final int CUSTO_OURO_MINA = 500;
-    public static final int CUSTO_COMIDA_MINA = 100;
+    public static final int TEMPO_CONSTRUCAO_MINA_MULT = 40;
+    public static final int TEMPO_USO_MINA_MULT = 2;
+    public static final int TEMPO_TRANSPORTE_MINA_MULT = 3;
+    public static final int CUSTO_OURO_MINA = 0;
+    public static final int CUSTO_COMIDA_MINA = 1000;
+    public static final int PRODUCAO_MINA_CICLO = 5;
 }

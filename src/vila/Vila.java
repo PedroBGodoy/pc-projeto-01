@@ -9,6 +9,7 @@ import java.util.ArrayList;
 public class Vila {
     private ArrayList<Aldeao> aldeaos;
     private ArrayList<Fazenda> fazendas;
+    private ArrayList<Mina> minas;
     private EstadoVila estado;
     private int comida;
     private int ouro;
@@ -19,6 +20,7 @@ public class Vila {
         this.estado = EstadoVila.PARADA;
         this.aldeaos = new ArrayList<>();
         this.fazendas = new ArrayList<>();
+        this.minas = new ArrayList<>();
 
         this.props = new Propriedades();
 
@@ -104,6 +106,11 @@ public class Vila {
         this.fazendas.add(fazenda);
     }
 
+    public void adicionarMina() {
+        Mina mina = new Mina(this.minas.size()+1, this);
+        this.minas.add(mina);
+    }
+
     public void atualizarOuro(int diferenca) {
         this.ouro += diferenca;
         Tela.i.mostrarOuro(this.ouro);
@@ -128,6 +135,29 @@ public class Vila {
                 .filter(fazenda -> fazenda.getID() == idFazenda)
                 .findFirst()
                 .orElse(null);
+    }
+
+    public Mina buscarMinaPorID(int idMina) {
+        return this.minas
+                .stream()
+                .filter(mina -> mina.getID() == idMina)
+                .findFirst()
+                .orElse(null);
+    }
+
+    public boolean consumirRecursos(int ouro, int comida) {
+        System.out.println("Ouro atual: " + this.ouro + " Consumo: " + ouro);
+        if(this.ouro - ouro < 0) {
+            Tela.i.mostrarMensagemErro("Alerta Vila", "Ouro insuficiente!");
+            return false;
+        }
+        if(this.comida - comida < 0) {
+            Tela.i.mostrarMensagemErro("Alerta Vila", "Comida insuficiente!");
+            return false;
+        }
+        this.atualizarComida(-comida);
+        this.atualizarOuro(-ouro);
+        return true;
     }
 
 }

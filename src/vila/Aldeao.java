@@ -77,10 +77,25 @@ public class Aldeao extends Thread {
         Tela.i.mostrarAldeao(this.getID(), "construindo " + estrutura);
         switch (estrutura) {
             case "Fazenda" -> {
+                int custoComida = this.vila.props.fazenda.getCustoComida();
+                int custoOuro = this.vila.props.fazenda.getCustoOuro();
+                if(!this.vila.consumirRecursos(custoOuro, custoComida)) {
+                    this.parar();
+                    return;
+                }
                 Thread.sleep(this.vila.props.fazenda.getTempoConstrucao());
                 this.vila.adicionarFazenda();
             }
-            case "Mina de ouro" -> Tela.i.mostrarMensagemErro("Alerta Aldeao", "Ainda não implementado. (Construcao Mina)");
+            case "Mina de ouro" -> {
+                int custoComida = this.vila.props.mina.getCustoComida();
+                int custoOuro = this.vila.props.mina.getCustoOuro();
+                if(!this.vila.consumirRecursos(custoOuro, custoComida)) {
+                    this.parar();
+                    return;
+                }
+                Thread.sleep(this.vila.props.mina.getTempoConstrucao());
+                this.vila.adicionarMina();
+            }
             case "Templo" -> Tela.i.mostrarMensagemErro("Alerta Aldeao", "Ainda não implementado. (Templo)");
             case "Maravilha" -> Tela.i.mostrarMensagemErro("Alerta Aldeao", "Ainda não implementado. (Maravilha)");
         }
@@ -97,7 +112,11 @@ public class Aldeao extends Thread {
 
     private void minerar(int numeroMina) throws InterruptedException {
         Tela.i.mostrarAldeao(this.getID(), "minerando mina de ouro " + numeroMina);
-        Thread.sleep(this.vila.props.mina.getTempoUso());
+        Mina mina = this.vila.buscarMinaPorID(numeroMina);
+        mina.minerar(this);
+        Thread.sleep(this.vila.props.mina.getTempoTransporte());
+        this.vila.atualizarOuro(this.vila.props.mina.getProducaoPorCiclo());
+        this.adicionarTarefa(new AcaoAldeao(TipoAcaoAldeao.MINERAR, numeroMina));
     }
 
     private void orar() throws InterruptedException {
