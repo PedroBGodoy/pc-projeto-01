@@ -3,6 +3,7 @@ package vila;
 import tela.Tela;
 
 import java.util.ArrayList;
+import java.util.Objects;
 import java.util.concurrent.Semaphore;
 
 public class Fazenda {
@@ -30,10 +31,10 @@ public class Fazenda {
             // Tenta iniciar cultivo, caso limite tenha excedido aguardar
             this.semaphore.acquire();
 
-            this.aldeaos.add(aldeao);
+            this.adicionarAldeao(aldeao);
             Tela.i.mostrarFazenda(this.getID(), this.formatarTextoAldeoes());
             Thread.sleep(this.vila.props.fazenda.getTempoUso());
-            this.aldeaos.remove(aldeao);
+            this.removerAldeao(aldeao);
             Tela.i.mostrarFazenda(this.getID(), this.formatarTextoAldeoes());
         } catch (InterruptedException e) {
             e.printStackTrace();
@@ -43,10 +44,26 @@ public class Fazenda {
         }
     }
 
+    private synchronized void adicionarAldeao(Aldeao aldeao) {
+        this.aldeaos.add(aldeao);
+    }
+
+    private synchronized void removerAldeao(Aldeao aldeao) {
+        this.aldeaos.remove(aldeao);
+    }
+
     private String formatarTextoAldeoes() {
-        synchronized (this.aldeaos) {
-            String[] idsAldeoes = this.aldeaos.stream().map(aldeao -> String.valueOf(aldeao.getID())).toArray(String[]::new);
-            return String.join(", ", idsAldeoes);
-        }
+        // Faz copia antes de utilizar para não ter conflito
+        ArrayList<Aldeao> copia = new ArrayList<>(this.aldeaos);
+        String[] idsAldeoes = copia
+                .stream()
+                .filter(Objects::nonNull)
+                .map(aldeao -> String.valueOf(aldeao.getID()))
+                .toArray(String[]::new);
+        return String.join(", ", idsAldeoes);
+    }
+
+    public void evoluir(int aumento) {
+        this.semaphore.release(aumento);
     }
 }

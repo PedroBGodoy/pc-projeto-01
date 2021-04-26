@@ -16,6 +16,9 @@ public class Constantes {
     public static final int CUSTO_OURO_ALDEAO = 0;
     public static final int CUSTO_COMIDA_ALDEAO = 100;
     public static final int TEMPO_SACRIFICIO_ALDEAO_MULT = 10;
+    public static final int CUSTO_OURO_EVOLUCAO_ALDEAO = 5000;
+    public static final int CUSTO_COMIDA_EVOLUCAO_ALDEAO = 5000;
+    public static final int TEMPO_EVOLUCAO_ALDEAO = 100;
 
     // FAZENDA
     public static final int TEMPO_CONSTRUCAO_FAZENDA_MULT = 30;
@@ -24,6 +27,10 @@ public class Constantes {
     public static final int CUSTO_OURO_FAZENDA = 500;
     public static final int CUSTO_COMIDA_FAZENDA = 100;
     public static final int PRODUCAO_FAZENDA_CICLO = 10;
+    public static final int CUSTO_OURO_EVOLUCAO_FAZENDA = 5000;
+    public static final int CUSTO_COMIDA_EVOLUCAO_FAZENDA = 500;
+    public static final int TEMPO_EVOLUCAO_FAZENDA = 100;
+    public static final int QTD_PRODUCAO_SIMULTANEA_FAZENDA = 5;
 
     // MINA
     public static final int TEMPO_CONSTRUCAO_MINA_MULT = 40;
@@ -32,4 +39,16 @@ public class Constantes {
     public static final int CUSTO_OURO_MINA = 0;
     public static final int CUSTO_COMIDA_MINA = 1000;
     public static final int PRODUCAO_MINA_CICLO = 5;
+    public static final int CUSTO_OURO_EVOLUCAO_MINA = 1000;
+    public static final int CUSTO_COMIDA_EVOLUCAO_MINA = 2000;
+    public static final int TEMPO_EVOLUCAO_MINA = 100;
+    public static final int QTD_PRODUCAO_SIMULTANEA_MINA = 5;
+
+    // TEMPLO
+    public static final int TEMPO_CONSTRUCAO_TEMPLO_MULT = 100;
+    public static final int TEMPO_USO_TEMPLO_MULT = 5;
+    public static final int CUSTO_OURO_TEMPLO = 2000;
+    public static final int CUSTO_COMIDA_TEMPLO = 2000;
+    public static final int PRODUCAO_TEMPLO_CICLO = 2;
+    public static final int PRODUCAO_TEMPLO_SACRIFICIO = 100;
 }

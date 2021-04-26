@@ -7,9 +7,10 @@ import java.awt.*;
 import java.util.ArrayList;
 
 public class Vila {
-    private ArrayList<Aldeao> aldeaos;
-    private ArrayList<Fazenda> fazendas;
-    private ArrayList<Mina> minas;
+    private final ArrayList<Aldeao> aldeaos;
+    private final ArrayList<Fazenda> fazendas;
+    private final ArrayList<Mina> minas;
+    private Templo templo;
     private EstadoVila estado;
     private int comida;
     private int ouro;
@@ -54,10 +55,6 @@ public class Vila {
         aldeaos.add(novoAldeao);
         Tela.i.adicionarAldeao(String.valueOf(novoAldeao.getID()), "parado");
         this.parar();
-    }
-
-    private void evoluir() {
-        Tela.i.mostrarMensagemErro("Vila", "Ainda não implementado");
     }
 
     public void comandoCriarAldeao() {
@@ -111,6 +108,14 @@ public class Vila {
         this.minas.add(mina);
     }
 
+    public void adicionarTemplo() {
+        if(this.templo != null) {
+            Tela.i.mostrarMensagemErro("Alerta Vila!", "Templo já foi criado!");
+            return;
+        }
+        this.templo = new Templo(this);
+    }
+
     public void atualizarOuro(int diferenca) {
         this.ouro += diferenca;
         Tela.i.mostrarOuro(this.ouro);
@@ -137,6 +142,10 @@ public class Vila {
                 .orElse(null);
     }
 
+    public Templo getTemplo() {
+        return this.templo;
+    }
+
     public Mina buscarMinaPorID(int idMina) {
         return this.minas
                 .stream()
@@ -146,7 +155,6 @@ public class Vila {
     }
 
     public boolean consumirRecursos(int ouro, int comida) {
-        System.out.println("Ouro atual: " + this.ouro + " Consumo: " + ouro);
         if(this.ouro - ouro < 0) {
             Tela.i.mostrarMensagemErro("Alerta Vila", "Ouro insuficiente!");
             return false;
@@ -158,6 +166,59 @@ public class Vila {
         this.atualizarComida(-comida);
         this.atualizarOuro(-ouro);
         return true;
+    }
+
+    public void comandoPrefeituraEvoluir(String evolucao) {
+        if(this.estado != EstadoVila.PARADA) return;
+        switch (evolucao) {
+            case "Evolução de aldeão" -> new Thread(this::evoluirAldeao).start();
+            case "Evolução de fazenda" -> new Thread(this::evoluirFazenda).start();
+            case "Evolução de mina de ouro" -> new Thread(this::evoluirMina).start();
+        }
+    }
+
+    private void evoluirAldeao() {
+        int custoOuro = this.props.aldeao.getCustoOuroEvolucao();
+        int custoComida = this.props.aldeao.getCustoComidaEvolucao();
+        if(!this.consumirRecursos(custoOuro, custoComida)) return;
+        Tela.i.mostrarPrefeitura("Evoluindo Aldeão", Color.BLUE);
+        try {
+            Thread.sleep(this.props.aldeao.getTempoEvolucao());
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        this.props.aldeao.evoluir();
+        this.parar();
+    }
+
+    private void evoluirFazenda() {
+        int custoOuro = this.props.fazenda.getCustoOuroEvolucao();
+        int custoComida = this.props.fazenda.getCustoComidaEvolucao();
+        if(!this.consumirRecursos(custoOuro, custoComida)) return;
+        Tela.i.mostrarPrefeitura("Evoluindo Fazenda", Color.BLUE);
+        try {
+            Thread.sleep(this.props.fazenda.getTempoEvolucao());
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        this.props.fazenda.evoluir();
+        this.fazendas.forEach(fazenda -> fazenda.evoluir(5));
+        this.parar();
+    }
+
+    private void evoluirMina() {
+        int custoOuro = this.props.mina.getCustoOuroEvolucao();
+        int custoComida = this.props.mina.getCustoComidaEvolucao();
+        if(!this.consumirRecursos(custoOuro, custoComida)) return;
+        Tela.i.mostrarPrefeitura("Evoluindo Mina", Color.BLUE);
+        try {
+            Thread.sleep(this.props.mina.getTempoEvolucao());
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        this.props.mina.evoluir();
+        this.minas.forEach(mina -> mina.evoluir(5));
+        this.parar();
     }
 
 }

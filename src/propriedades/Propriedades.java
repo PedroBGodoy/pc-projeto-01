@@ -7,7 +7,7 @@ public class Propriedades {
     public PropriedadesTemplo templo;
 
     public Propriedades() {
-        this.aldeao = new PropriedadesAldeao();
+        this.aldeao = new PropriedadesAldeao(this);
         this.fazenda = new PropriedadesFazenda();
         this.mina = new PropriedadesMina();
         this.templo = new PropriedadesTemplo();

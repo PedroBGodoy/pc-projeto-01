@@ -624,7 +624,7 @@ public class Tela extends JFrame {
 	}
 
 	public void comandoPrefeituraEvoluir(String strEvolucao) {
-		System.out.println("comandoPrefeituraEvoluir(strEvolucao);");
+		this.vila.comandoPrefeituraEvoluir(strEvolucao);
 	}
 
 	public void comandoTemploEvoluir(String strEvolucao) {

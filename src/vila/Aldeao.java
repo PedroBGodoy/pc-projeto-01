@@ -96,14 +96,25 @@ public class Aldeao extends Thread {
                 Thread.sleep(this.vila.props.mina.getTempoConstrucao());
                 this.vila.adicionarMina();
             }
-            case "Templo" -> Tela.i.mostrarMensagemErro("Alerta Aldeao", "Ainda não implementado. (Templo)");
+            case "Templo" -> {
+                if(this.vila.getTemplo() != null) return;
+                int custoComida = this.vila.props.templo.getCustoComida();
+                int custoOuro = this.vila.props.templo.getCustoOuro();
+                if(!this.vila.consumirRecursos(custoOuro, custoComida)) {
+                    this.parar();
+                    return;
+                }
+                Thread.sleep(this.vila.props.templo.getTempoConstrucao());
+                this.vila.adicionarTemplo();
+            }
             case "Maravilha" -> Tela.i.mostrarMensagemErro("Alerta Aldeao", "Ainda não implementado. (Maravilha)");
         }
     }
 
     private void cultivar(int numeroFazendo) throws InterruptedException {
-        Tela.i.mostrarAldeao(this.getID(), "cultivando FAZENDA " + numeroFazendo);
+        Tela.i.mostrarAldeao(this.getID(), "cultivando Fazenda " + numeroFazendo);
         Fazenda fazenda = this.vila.buscarFazendaPorID(numeroFazendo);
+        if(fazenda == null) return;
         fazenda.cultivar(this);
         Thread.sleep(this.vila.props.fazenda.getTempoTransporte());
         this.vila.atualizarComida(this.vila.props.fazenda.getProducaoPorCiclo());
@@ -111,8 +122,9 @@ public class Aldeao extends Thread {
     }
 
     private void minerar(int numeroMina) throws InterruptedException {
-        Tela.i.mostrarAldeao(this.getID(), "minerando mina de ouro " + numeroMina);
+        Tela.i.mostrarAldeao(this.getID(), "minerando Mina de Ouro " + numeroMina);
         Mina mina = this.vila.buscarMinaPorID(numeroMina);
+        if(mina == null) return;
         mina.minerar(this);
         Thread.sleep(this.vila.props.mina.getTempoTransporte());
         this.vila.atualizarOuro(this.vila.props.mina.getProducaoPorCiclo());
@@ -121,12 +133,16 @@ public class Aldeao extends Thread {
 
     private void orar() throws InterruptedException {
         Tela.i.mostrarAldeao(this.getID(), "orando");
-        Thread.sleep(this.vila.props.templo.getTempoUso());
+        Templo templo = this.vila.getTemplo();
+        if(templo == null) return;
+        templo.orar();
+        this.adicionarTarefa(new AcaoAldeao(TipoAcaoAldeao.ORAR));
     }
 
-    public void sacrificar() throws InterruptedException {
-        this.vivo = false;
+    public void sacrificar() {
+        Templo templo = this.vila.getTemplo();
+        templo.registrarSacrificio();
         Tela.i.mostrarAldeao(this.getID(), "sacrificado");
-        Thread.sleep(this.vila.props.aldeao.getTempoSacrificio());
+        this.vivo = false;
     }
 }
