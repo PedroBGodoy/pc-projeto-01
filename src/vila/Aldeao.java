@@ -107,7 +107,21 @@ public class Aldeao extends Thread {
                 Thread.sleep(this.vila.props.templo.getTempoConstrucao());
                 this.vila.adicionarTemplo();
             }
-            case "Maravilha" -> Tela.i.mostrarMensagemErro("Alerta Aldeao", "Ainda não implementado. (Maravilha)");
+            case "Maravilha" -> {
+                int custoComida = this.vila.props.maravilha.getCustoComidaTijolo();
+                int custoOuro = this.vila.props.maravilha.getCustoOuroTijolo();
+                if(!this.vila.consumirRecursos(custoOuro, custoComida)) {
+                    this.parar();
+                    return;
+                }
+                Maravilha maravilha = this.vila.buscarMaravilha();
+                if(maravilha.pendenteFinalizacao()) {
+                    maravilha.ajudarConstrucao();
+                    this.adicionarTarefa(new AcaoAldeao(TipoAcaoAldeao.CONSTRUIR, "Maravilha"));
+                } else {
+                    this.parar();
+                }
+            }
         }
     }
 
@@ -139,8 +153,9 @@ public class Aldeao extends Thread {
         this.adicionarTarefa(new AcaoAldeao(TipoAcaoAldeao.ORAR));
     }
 
-    public void sacrificar() {
+    private void sacrificar() {
         Templo templo = this.vila.getTemplo();
+        if(templo == null) return;
         templo.registrarSacrificio();
         Tela.i.mostrarAldeao(this.getID(), "sacrificado");
         this.vivo = false;

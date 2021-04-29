@@ -1,4 +1,7 @@
-package propriedades;
+package propriedades.construcao;
+
+import propriedades.BasePropriedades;
+import propriedades.Constantes;
 
 public class PropriedadesMina extends BasePropriedades {
     private int tempoTransporte;

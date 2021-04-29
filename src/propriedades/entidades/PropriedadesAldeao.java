@@ -1,4 +1,8 @@
-package propriedades;
+package propriedades.entidades;
+
+import propriedades.BasePropriedades;
+import propriedades.Constantes;
+import propriedades.Propriedades;
 
 public class PropriedadesAldeao extends BasePropriedades {
     private int custoOuroEvolucao;

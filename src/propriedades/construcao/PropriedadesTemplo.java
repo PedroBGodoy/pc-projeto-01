@@ -1,8 +1,18 @@
-package propriedades;
+package propriedades.construcao;
+
+import propriedades.BasePropriedades;
+import propriedades.Constantes;
+import propriedades.evolucao.templo.*;
 
 public class PropriedadesTemplo extends BasePropriedades {
     private int producaoPorCiclo;
     private int producaoPorSacrifio;
+    public EvNuvemGafanhoto evNuvemGafanhoto;
+    public EvMortePrimogenitos evMortePrimogenitos;
+    public EvChuvaPedras evChuvaPedras;
+    public EvProtecaoNuvemGafanhoto evProtecaoNuvemGafanhoto;
+    public EvProtecaoMortePrimogenitos evProtecaoMortePrimogenitos;
+    public EvProtecaoChuvaPedras evProtecaoChuvaPedras;
 
     public PropriedadesTemplo() {
         this.setCustoComida(Constantes.CUSTO_COMIDA_TEMPLO);

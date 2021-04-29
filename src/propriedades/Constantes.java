@@ -5,17 +5,22 @@ package propriedades;
  */
 public class Constantes {
 
-    // GERAL
     /**
      * Representa 1 hora em jogo. Valor definido em milisegundos (ms)
      */
-    public static final int HORA_BASE = 100;
+    public static final int HORA_BASE = 500;
+
+    // PROPRIEDADES INICIO JOGO
+    public static final int QTD_OURO_INICIAL = 100;
+    public static final int QTD_COMIDA_INICIAL = 150;
+    public static final int QTD_ALDEOES_INICIAL = 5;
+    public static final int QTD_FAZENDAS_INICIAL = 1;
+    public static final int QTD_MINAS_INICIAL = 1;
 
     // ALDEAO
     public static final int TEMPO_PRODUCAO_ALDEAO_MULT = 20;
     public static final int CUSTO_OURO_ALDEAO = 0;
     public static final int CUSTO_COMIDA_ALDEAO = 100;
-    public static final int TEMPO_SACRIFICIO_ALDEAO_MULT = 10;
     public static final int CUSTO_OURO_EVOLUCAO_ALDEAO = 5000;
     public static final int CUSTO_COMIDA_EVOLUCAO_ALDEAO = 5000;
     public static final int TEMPO_EVOLUCAO_ALDEAO = 100;
@@ -51,4 +56,29 @@ public class Constantes {
     public static final int CUSTO_COMIDA_TEMPLO = 2000;
     public static final int PRODUCAO_TEMPLO_CICLO = 2;
     public static final int PRODUCAO_TEMPLO_SACRIFICIO = 100;
+
+    // EVOLUÇÕES TEMPLO
+    public static final int CUSTO_FE_EVOLUCAO_NUVEM_GANFANHOTOS = 1000;
+    public static final int TEMPO_EVOLUCAO_NUVEM_GANFANHOTOS_MULT = 50;
+
+    public static final int CUSTO_FE_EVOLUCAO_MORTE_PRIMOGENITOS = 1500;
+    public static final int TEMPO_EVOLUCAO_MORTE_PRIMOGENITOS_MULT = 100;
+
+    public static final int CUSTO_FE_EVOLUCAO_CHUVA_PEDRAS = 2000;
+    public static final int TEMPO_EVOLUCAO_CHUVA_PEDRAS_MULT = 200;
+
+    public static final int CUSTO_FE_EVOLUCAO_PROTECAO_NUVEM_GANFANHOTOS = 5000;
+    public static final int TEMPO_EVOLUCAO_PROTECAO_NUVEM_GANFANHOTOS_MULT = 500;
+
+    public static final int CUSTO_FE_EVOLUCAO_PROTECAO_MORTE_PRIMOGENITOS = 6000;
+    public static final int TEMPO_EVOLUCAO_PROTECAO_MORTE_PRIMOGENITOS_MULT = 600;
+
+    public static final int CUSTO_FE_EVOLUCAO_PROTECAO_CHUVA_PEDRAS = 7000;
+    public static final int TEMPO_EVOLUCAO_PROTECAO_CHUVA_PEDRAS_MULT = 700;
+
+    // MARAVILHA
+    public static final int QTD_TIJOLOS_NECESSARIOS = 100000;
+    public static final int CUSTO_COMIDA_TIJOLO = 1;
+    public static final int CUSTO_OURO_TIJOLO = 1;
+    public static final int TEMPO_CONSTRUCAO_TIJOLO_MULT = 10;
 }

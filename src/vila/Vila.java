@@ -11,6 +11,7 @@ public class Vila {
     private final ArrayList<Fazenda> fazendas;
     private final ArrayList<Mina> minas;
     private Templo templo;
+    private Maravilha maravilha;
     private EstadoVila estado;
     private int comida;
     private int ouro;
@@ -24,9 +25,23 @@ public class Vila {
         this.minas = new ArrayList<>();
 
         this.props = new Propriedades();
+        this.inicializar();
+    }
 
-        this.atualizarComida(1000);
-        this.atualizarOuro(1000);
+    /**
+     * Aplica valores base como quantidade inicial de
+     * comida, ouro, aldeoes, fazendas e minas
+     */
+    private void inicializar() {
+        this.maravilha = new Maravilha(this);
+        this.atualizarComida(this.props.geral.getQtdComidaInicial());
+        this.atualizarOuro(this.props.geral.getQtdOuroInicial());
+        for (int i = 0; i < this.props.geral.getQtdFazendasInicial(); i++)
+            this.adicionarFazenda();
+        for (int i = 0; i < this.props.geral.getQtdMinasInicial(); i++)
+            this.adicionarMina();
+        for (int i = 0; i < this.props.geral.getQtdAldeoesInicial(); i++)
+            this.adicionarAldeao();
     }
 
     private void parar() {
@@ -35,13 +50,9 @@ public class Vila {
     }
 
     private void produzirAldeao() {
-        if(this.comida < this.props.aldeao.getCustoComida() || this.comida < this.props.aldeao.getCustoOuro()) {
-            Tela.i.mostrarMensagemErro("Alerta Vila", "Recursos insuficientes!");
-            this.parar();
-            return;
-        }
-        this.atualizarComida(-this.props.aldeao.getCustoComida());
-        this.atualizarOuro(-this.props.aldeao.getCustoOuro());
+        int custoOuro = this.props.aldeao.getCustoOuro();
+        int custoComida = this.props.aldeao.getCustoComida();
+        if(!this.consumirRecursos(custoOuro, custoComida)) return;
 
         this.estado = EstadoVila.PRODUZINDO_ALDEAO;
         Tela.i.mostrarPrefeitura("produzindo aldeao", Color.YELLOW);
@@ -50,11 +61,15 @@ public class Vila {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+        this.adicionarAldeao();
+        this.parar();
+    }
+
+    private void adicionarAldeao() {
         Aldeao novoAldeao = new Aldeao(this.aldeaos.size()+1, this);
         novoAldeao.start();
         aldeaos.add(novoAldeao);
         Tela.i.adicionarAldeao(String.valueOf(novoAldeao.getID()), "parado");
-        this.parar();
     }
 
     public void comandoCriarAldeao() {
@@ -154,6 +169,10 @@ public class Vila {
                 .orElse(null);
     }
 
+    public Maravilha buscarMaravilha() {
+        return this.maravilha;
+    }
+
     public boolean consumirRecursos(int ouro, int comida) {
         if(this.ouro - ouro < 0) {
             Tela.i.mostrarMensagemErro("Alerta Vila", "Ouro insuficiente!");
@@ -219,6 +238,14 @@ public class Vila {
         this.props.mina.evoluir();
         this.minas.forEach(mina -> mina.evoluir(5));
         this.parar();
+    }
+
+    public void comandoTemploEvoluir(String evolucao) {
+        this.templo.comandoTemploEvoluir(evolucao);
+    }
+
+    public void ganharJogo() {
+        System.out.println("Você ganhou o jogo!");
     }
 
 }
