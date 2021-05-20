@@ -1,6 +1,5 @@
 package vila;
 
-import propriedades.Constantes;
 import tela.Tela;
 
 public class Maravilha {
