@@ -60,7 +60,10 @@ public class Templo {
         }
         int custoFe = this.props.evNuvemGafanhoto.getCustoFe();
         int custoTempo = this.props.evNuvemGafanhoto.getTempoEvolucao();
-        this.evoluir(custoFe, custoTempo, "Nuvem de gafanhotos");
+        boolean evoluiu = this.evoluir(custoFe, custoTempo, "Nuvem de gafanhotos");
+        if(!evoluiu) {
+            return;
+        }
         this.ataques.add("NUVEM_GAFANHOTOS");
         Tela.i.mostrarAtaques(this.ataques);
     }
@@ -72,7 +75,10 @@ public class Templo {
         }
         int custoFe = this.props.evMortePrimogenitos.getCustoFe();
         int custoTempo = this.props.evMortePrimogenitos.getTempoEvolucao();
-        this.evoluir(custoFe, custoTempo, "Morte dos primogênitos");
+        boolean evoluiu = this.evoluir(custoFe, custoTempo, "Morte dos primogênitos");
+        if(!evoluiu) {
+            return;
+        }
         this.ataques.add("MORTE_PRIMOGENITOS");
         Tela.i.mostrarAtaques(this.ataques);
     }
@@ -84,7 +90,10 @@ public class Templo {
         }
         int custoFe = this.props.evChuvaPedras.getCustoFe();
         int custoTempo = this.props.evChuvaPedras.getTempoEvolucao();
-        this.evoluir(custoFe, custoTempo, "Chuva de pedras");
+        boolean evoluiu = this.evoluir(custoFe, custoTempo, "Chuva de pedras");
+        if(!evoluiu) {
+            return;
+        }
         this.ataques.add("CHUVA_PEDRAS");
         Tela.i.mostrarAtaques(this.ataques);
     }
@@ -107,10 +116,10 @@ public class Templo {
         this.evoluir(custoFe, custoTempo, "Proteção contra chuva de pedras");
     }
 
-    private void evoluir(int custoFe, int tempo, String evolucao) {
+    private boolean evoluir(int custoFe, int tempo, String evolucao) {
         if(this.fe < custoFe) {
             Tela.i.mostrarMensagemErro("Alerta Templo", "Você não possui fé o suficiente!");
-            return;
+            return false;
         }
         Tela.i.mostrarTemplo("Evoluindo " + evolucao, Color.BLUE);
         this.estado = EstadoTemplo.EVOLUINDO;
@@ -121,5 +130,6 @@ public class Templo {
         }
         Tela.i.mostrarTemplo("parado", Color.WHITE);
         this.estado = EstadoTemplo.PARADO;
+        return true;
     }
 }

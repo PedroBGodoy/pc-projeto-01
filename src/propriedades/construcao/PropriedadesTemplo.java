@@ -22,6 +22,14 @@ public class PropriedadesTemplo extends BasePropriedades {
         this.setTempoUso(Constantes.HORA_BASE * Constantes.TEMPO_USO_TEMPLO_MULT);
         this.setProducaoPorCiclo(Constantes.PRODUCAO_TEMPLO_CICLO);
         this.setProducaoPorSacrifio(Constantes.PRODUCAO_TEMPLO_SACRIFICIO);
+
+        this.evNuvemGafanhoto = new EvNuvemGafanhoto();
+        this.evMortePrimogenitos = new EvMortePrimogenitos();
+        this.evChuvaPedras = new EvChuvaPedras();
+
+        this.evProtecaoNuvemGafanhoto = new EvProtecaoNuvemGafanhoto();
+        this.evProtecaoMortePrimogenitos = new EvProtecaoMortePrimogenitos();
+        this.evProtecaoChuvaPedras = new EvProtecaoChuvaPedras();
     }
 
     public int getProducaoPorCiclo() {

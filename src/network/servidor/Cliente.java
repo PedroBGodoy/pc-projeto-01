@@ -83,6 +83,18 @@ public class Cliente implements Runnable {
         this.servidor.enviarComandoTodos(String.format("MSG#%s: %s", this.nome, mensagem));
     }
 
+    private void iniciarJogo() {
+        this.servidor.enviarComandoTodos("INICIAR_JOGO");
+    }
+
+    private void encerrarJogo() {
+        this.servidor.enviarComandoTodos("ENCERRAR_JOGO");
+    }
+
+    private void informarVitoria() {
+        this.servidor.enviarComandoTodos("VITORIA#"+this.nome);
+    }
+
     private void tratarComando(Integer id, String comando) {
         System.out.println("Comando recebido: " + comando);
         String[] parametros = comando.split("#", 2);
@@ -92,38 +104,29 @@ public class Cliente implements Runnable {
         }
 
         switch (parametros[0]) {
-            case "CONECTADO":
-                System.out.println(String.format("Cliente conectado ID: %d Nome: %s", this.id, parametros[1]));
+            // ----- CONEXAO -----
+            case "CONECTADO" -> {
                 this.nome = parametros[1];
                 this.anunciarConexao();
                 this.enviarListaJogadores();
-                break;
-            case "DESCONECTAR":
-                System.out.println(String.format("Cliente desconectado ID: %d", this.id));
-                this.desconectar();
-                break;
-            case "NICK":
-                System.out.println(id + " alterando nome para: " + parametros[1]);
-                this.alterarNome(parametros[1]);
-                break;
-            case "MSG":
-                System.out.println("Mensagem recebida: " + parametros[1]);
-                this.enviarMensagem(parametros[1]);
-                break;
-            case "ATAQUE_NUVEM_GAFANHOTOS":
-                System.out.println(id + " atacou com nuvem de gafanhotos " + parametros[1]);
-                // Enviar ataque a jogador
-                break;
-            case "ATAQUE_MORTE_PRIMOGENITOS":
-                System.out.println(id + " atacou com morte dos primogenitos " + parametros[1]);
-                // Enviar ataque a jogador
-                break;
-            case "ATAQUE_CHUVA_PEDRAS":
-                System.out.println(id + " atacou com nuvem de gafanhotos em " + parametros[1]);
-                // Enviar ataque a jogador
-                break;
-            default:
-                System.out.println("[Servidor] Comando inválido: " + parametros[0]);
+            }
+            case "DESCONECTAR" -> this.desconectar();
+
+            // ----- GERAL -----
+            case "NICK" -> this.alterarNome(parametros[1]);
+            case "MSG" -> this.enviarMensagem(parametros[1]);
+
+            // ----- CONTROLE JOGO -----
+            case "INICIAR_JOGO" -> this.iniciarJogo();
+            case "ENCERRAR_JOGO", "DESTRUIR_JOGO" -> this.encerrarJogo();
+            case "VITORIA" -> this.informarVitoria();
+
+            // ----- ATAQUES -----
+            case "ATAQUE_NUVEM_GAFANHOTOS",
+                 "ATAQUE_MORTE_PRIMOGENITOS",
+                 "ATAQUE_CHUVA_PEDRAS" -> this.enviarAtaque(parametros[0], parametros[1]);
+
+            default -> System.out.println("[Servidor] Comando inválido: " + parametros[0]);
         }
     }
 
@@ -131,5 +134,14 @@ public class Cliente implements Runnable {
         System.out.println("Enviando comando para " + this.id + " comando: " + comando);
         this.saida.format("%s\n", comando);
         this.saida.flush();
+    }
+
+    private void enviarAtaque(String codigoAtaque, String alvo) {
+        Collection<Cliente> clientes = this.servidor.getClientes();
+        clientes.forEach(cliente -> {
+            if(cliente.nome.equals(alvo)) {
+                cliente.enviarComando(codigoAtaque);
+            }
+        });
     }
 }

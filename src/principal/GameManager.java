@@ -2,9 +2,13 @@ package principal;
 
 import network.cliente.Cliente;
 import network.servidor.Servidor;
+import tela.Tela;
+import vila.Vila;
 
 public class GameManager {
     private Cliente cliente;
+
+    private Vila vila;
 
     public boolean criarJogo(String ip, int porta, String nome) {
         this.iniciarServidor();
@@ -28,13 +32,47 @@ public class GameManager {
     }
 
     public boolean conectarServidor(String ip, int porta, String nome) {
-        this.cliente = new Cliente(nome);
+        this.cliente = new Cliente(this);
         cliente.conectar(ip, porta, nome);
         return true;
     }
 
+    public void iniciarJogo() {
+        this.vila = new Vila(this);
+        Tela.i.comandoIniciarJogo(this.vila);
+    }
+
     public void desconectar() {
         this.cliente.desconectar();
+    }
+
+    public void solicitarInicioJogo() {
+        this.cliente.solicitarInicioJogo();
+    }
+
+    public void solicitarEncerramentoJogo() {
+        this.cliente.solicitarEncerramentoJogo();
+    }
+
+    public void encerrarJogo() {
+        Tela.i.comandoEncerrarJogo();
+    }
+
+    public void enviarVitoria() {
+        this.cliente.enviarVitoria();
+    }
+
+    public void informarVitoria(String nomeJogador) {
+        Tela.i.comandoVitoria(nomeJogador);
+        this.encerrarJogo();
+    }
+
+    public void enviarAtaque(String codigoAtaque, String nomeJogador) {
+        this.cliente.enviarAtaque(codigoAtaque, nomeJogador);
+    }
+
+    public void receberAtaque(String codigoAtaque) {
+        this.vila.receberAtaque(codigoAtaque);
     }
 
     public void enviarMensagem(String mensagem) {

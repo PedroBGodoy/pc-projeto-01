@@ -1,5 +1,6 @@
 package vila;
 
+import principal.GameManager;
 import propriedades.Propriedades;
 import tela.Tela;
 
@@ -18,11 +19,15 @@ public class Vila {
 
     public Propriedades props;
 
-    public Vila() {
+    private GameManager gameManager;
+
+    public Vila(GameManager gameManager) {
         this.estado = EstadoVila.PARADA;
         this.aldeaos = new ArrayList<>();
         this.fazendas = new ArrayList<>();
         this.minas = new ArrayList<>();
+
+        this.gameManager = gameManager;
 
         this.props = new Propriedades();
         this.inicializar();
@@ -111,6 +116,14 @@ public class Vila {
         Aldeao aldeao = this.buscarAldeaoPorID(idAldeao);
         AcaoAldeao acao = new AcaoAldeao(TipoAcaoAldeao.SACRIFICAR, 1000);
         aldeao.adicionarTarefa(acao);
+    }
+
+    public void comandoTemploLancar(String strPraga, String strInimigo) {
+        switch (strPraga) {
+            case "Nuvem de gafanhotos" -> this.gameManager.enviarAtaque("ATAQUE_NUVEM_GAFANHOTOS", strInimigo);
+            case "Morte dos primogênitos" -> this.gameManager.enviarAtaque("ATAQUE_MORTE_PRIMOGENITOS", strInimigo);
+            case "Chuva de pedras" -> this.gameManager.enviarAtaque("ATAQUE_CHUVA_PEDRAS", strInimigo);
+        }
     }
 
     public void adicionarFazenda() {
@@ -245,7 +258,30 @@ public class Vila {
     }
 
     public void ganharJogo() {
-        System.out.println("Você ganhou o jogo!");
+        this.gameManager.enviarVitoria();
+    }
+
+    public void receberAtaque(String codigoAtaque) {
+        switch (codigoAtaque) {
+            case "ATAQUE_NUVEM_GAFANHOTOS" -> this.destruirMetadeFazendas();
+            case "ATAQUE_MORTE_PRIMOGENITOS" -> this.matarMetadeAldeoes();
+            case "ATAQUE_CHUVA_PEDRAS" -> this.receberChuvaDePedra();
+        }
+    }
+
+    private void destruirMetadeFazendas() {
+        System.out.println("destruirMetadeFazendas");
+        // A fazer
+    }
+
+    private void matarMetadeAldeoes() {
+        System.out.println("matarMetadeAldeoes");
+        // A fazer
+    }
+
+    private void receberChuvaDePedra() {
+        System.out.println("receberChuvaDePedra");
+        // A fazer
     }
 
 }

@@ -8,7 +8,7 @@ public class Constantes {
     /**
      * Representa 1 hora em jogo. Valor definido em milisegundos (ms)
      */
-    public static final int HORA_BASE = 500;
+    public static final int HORA_BASE = 10;
 
     // PROPRIEDADES INICIO JOGO
     public static final int QTD_OURO_INICIAL = 100;

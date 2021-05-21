@@ -1,5 +1,6 @@
 package network.cliente;
 
+import principal.GameManager;
 import tela.Tela;
 
 import java.io.*;
@@ -7,22 +8,20 @@ import java.net.Socket;
 import java.util.Formatter;
 
 public class Cliente {
-    private int id;
-    private String nome;
-
-    private Socket socket;
     private BufferedReader entrada;
     private Formatter saida;
 
-    public Cliente(String nome) {
-        this.nome = nome;
+    private GameManager gameManager;
+
+    public Cliente(GameManager gameManager) {
+        this.gameManager = gameManager;
     }
 
     public void conectar(String ip, int porta, String nome) {
         try {
-            this.socket = new Socket(ip, porta);
-            this.entrada = new BufferedReader(new InputStreamReader(this.socket.getInputStream()));
-            this.saida = new Formatter(new OutputStreamWriter(this.socket.getOutputStream()));
+            Socket socket = new Socket(ip, porta);
+            this.entrada = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            this.saida = new Formatter(new OutputStreamWriter(socket.getOutputStream()));
 
             Thread listener = new Thread(() -> {
                String mensagem;
@@ -39,7 +38,7 @@ public class Cliente {
             });
             listener.start();
 
-            // Defini nome assim que conectar ao servidor
+            // Envia pacote de conexão
             this.enviarComando("CONECTADO#"+nome);
 
         } catch (IOException e) {
@@ -55,34 +54,31 @@ public class Cliente {
         }
 
         switch (parametros[0]) {
-            case "NICK":
-                System.out.println("Alterando nome para: " + parametros[1]);
-                break;
-            case "MSG":
-                Tela.i.adicionarMensagem(parametros[1]);
-                break;
-            case "NOVO_JOGADOR":
+            // ----- CONEXAO -----
+            case "NOVO_JOGADOR" -> {
                 Tela.i.adicionarMensagem(parametros[2] + " entrou");
                 Tela.i.adicionarJogador(parametros[2], parametros[2], parametros[2], parametros[2]);
-                break;
-            case "DESCONECTADO":
+            }
+            case "DESCONECTADO" -> {
                 Tela.i.adicionarMensagem(parametros[2] + " saiu");
                 Tela.i.removerJogador(parametros[2]);
-                break;
-            case "ATAQUE_NUVEM_GAFANHOTOS":
-                System.out.println(id + " atacou com nuvem de gafanhotos " + parametros[1]);
-                // Enviar ataque a jogador
-                break;
-            case "ATAQUE_MORTE_PRIMOGENITOS":
-                System.out.println(id + " atacou com morte dos primogenitos " + parametros[1]);
-                // Enviar ataque a jogador
-                break;
-            case "ATAQUE_CHUVA_PEDRAS":
-                System.out.println(id + " atacou com nuvem de gafanhotos em " + parametros[1]);
-                // Enviar ataque a jogador
-                break;
-            default:
-                System.out.println("[Cliente] Comando inválido");
+            }
+
+            // ----- GERAL -----
+            case "NICK" -> System.out.println("Alterando nome para: " + parametros[1]);
+            case "MSG" -> Tela.i.adicionarMensagem(parametros[1]);
+
+            // ----- CONTROLE JOGO -----
+            case "INICIAR_JOGO" -> this.gameManager.iniciarJogo();
+            case "ENCERRAR_JOGO", "DESTRUIR_JOGO" -> this.gameManager.encerrarJogo();
+            case "VITORIA" -> this.gameManager.informarVitoria(parametros[1]);
+
+            // ----- ATAQUES -----
+            case "ATAQUE_NUVEM_GAFANHOTOS",
+                 "ATAQUE_MORTE_PRIMOGENITOS",
+                 "ATAQUE_CHUVA_PEDRAS"  -> this.gameManager.receberAtaque(parametros[0]);
+
+            default -> System.out.println("[Cliente] Comando inválido");
         }
     }
 
@@ -97,5 +93,21 @@ public class Cliente {
 
     public void enviarMensagem(String mensagem) {
         this.enviarComando("MSG#" + mensagem);
+    }
+
+    public void solicitarInicioJogo() {
+        this.enviarComando("INICIAR_JOGO");
+    }
+
+    public void solicitarEncerramentoJogo() {
+        this.enviarComando("ENCERRAR_JOGO");
+    }
+
+    public void enviarVitoria() {
+        this.enviarComando("VITORIA");
+    }
+
+    public void enviarAtaque(String codigoAtaque, String alvo) {
+        this.enviarComando(String.format("%s#%s", codigoAtaque, alvo));
     }
 }

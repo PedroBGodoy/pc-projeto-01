@@ -1,45 +1,24 @@
 package tela;
 
-import java.awt.Color;
-import java.awt.Dialog.ModalExclusionType;
-import java.awt.FlowLayout;
-import java.awt.Font;
-import java.awt.Rectangle;
-import java.awt.Toolkit;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.text.NumberFormat;
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.swing.ButtonGroup;
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JProgressBar;
-import javax.swing.JRadioButton;
-import javax.swing.JScrollPane;
-import javax.swing.JTabbedPane;
-import javax.swing.JTable;
-import javax.swing.JTextArea;
-import javax.swing.JTextField;
-import javax.swing.ListSelectionModel;
-import javax.swing.ScrollPaneConstants;
-import javax.swing.SwingConstants;
-import javax.swing.border.EtchedBorder;
-import javax.swing.border.TitledBorder;
-import javax.swing.table.DefaultTableCellRenderer;
-import javax.swing.table.DefaultTableModel;
-
 import principal.GameManager;
 import tela.enumerador.SituacaoInicio;
 import vila.Vila;
 
+import javax.swing.*;
+import javax.swing.border.EtchedBorder;
+import javax.swing.border.TitledBorder;
+import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.DefaultTableModel;
+import java.awt.*;
+import java.awt.Dialog.ModalExclusionType;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.Serial;
+import java.text.NumberFormat;
+import java.util.List;
+
 public class Tela extends JFrame {
+	@Serial
 	private static final long serialVersionUID = 1L;
 	private JTabbedPane tpJogo;
 	//*** Inicio *************************************************************
@@ -106,10 +85,9 @@ public class Tela extends JFrame {
 
 	public Tela() {
 		Tela.i = this;
-		setIconImage(Toolkit.getDefaultToolkit().getImage(Tela2.class.getResource("/tela/img/icone.png")));
+		setIconImage(Toolkit.getDefaultToolkit().getImage(Tela.class.getResource("/tela/img/icone.png")));
 		initialize();
 
-		this.vila = new Vila();
 		this.gameManager = new GameManager();
 	}
 
@@ -523,7 +501,7 @@ public class Tela extends JFrame {
 
 		this.lblMaravilha = new JLabel();
 		this.lblMaravilha.setBounds(10, 20, 215, 170);
-		this.lblMaravilha.setIcon(new ImageIcon(Tela2.class.getResource("/tela/img/maravilha.png")));
+		this.lblMaravilha.setIcon(new ImageIcon(Tela.class.getResource("/tela/img/maravilha.png")));
 		this.lblMaravilha.setEnabled(false);
 		this.pnMaravilha.add(this.lblMaravilha);
 
@@ -563,19 +541,19 @@ public class Tela extends JFrame {
 
 		this.btnDestruirJogo.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				comandoDestruirJogo();
+				comandoSolicitarEncerramentoJogo();
 			}
 		});
 
 		this.btnIniciarJogo.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				comandoIniciarJogo();
+				comandoSolicitarInicioJogo();
 			}
 		});
 
 		this.btnEncerrarJogo.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				comandoEncerrarJogo();
+				comandoSolicitarEncerramentoJogo();
 			}
 		});
 
@@ -666,40 +644,6 @@ public class Tela extends JFrame {
 		});
 
 	}
-
-	//************************************************************************
-	//*** Testar - Depois pode apagar ****************************************
-	//************************************************************************
-	public void testar() {
-		this.adicionarAldeao("1", "fazendo nada");
-		this.mostrarAldeao(1, "continua fazendo nada");
-		this.adicionarFazenda("1", "aaaa");
-		this.mostrarFazenda(1, "bbbb");
-		this.mostrarComida(111);
-		this.adicionarMinaOuro("1", "cccc");
-		this.mostrarMinaOuro(1, "dddd");
-		this.mostrarOuro(222);
-		this.mostrarOferendaFe(333);
-		this.mostrarPrefeitura("eeee", Color.ORANGE);
-		this.habilitarTemplo();
-		this.habilitarMaravilha();
-		this.mostrarMaravilha(444);
-		List<String> evolucoes = new ArrayList<String>();
-		evolucoes.add("NUVEM_GAFANHOTOS");
-		evolucoes.add("MORTE_PRIMOGENITOS");
-		evolucoes.add("CHUVA_PEDRAS");
-		this.mostrarAtaques(evolucoes);
-		this.mostrarTemplo("ffff", Color.MAGENTA);
-	}
-	public void testarInicio() {
-		this.adicionarJogador("Jose", "Brasileiro", "100.200.300.400", "vivo");
-		this.mostrarSituacaoJogador(1, "morto");
-		this.adicionarMensagem("oi");
-		this.adicionarMensagem("tudo bem?");
-	}
-	//************************************************************************
-	//************************************************************************
-	//************************************************************************
 
 	//*** Entrada=Apresentação - altera valores dos componentes **************
 	//*** Inicio ************************************************************
@@ -827,6 +771,10 @@ public class Tela extends JFrame {
 		JOptionPane.showMessageDialog(null, mensagem, titulo, JOptionPane.ERROR_MESSAGE);
 	}
 
+	public void mostrarMensagemVitoria(String mensagem) {
+		JOptionPane.showMessageDialog(null, mensagem, "VITÓRIA", JOptionPane.INFORMATION_MESSAGE);
+	}
+
 	public void adicionarAldeao(String numero, String acao) {
 		String[] linha = {numero, acao};
 		this.tmAldeoes.addRow(linha);
@@ -898,9 +846,9 @@ public class Tela extends JFrame {
 		this.cbTemploLancamentos.removeAllItems();
 		for (String evolucao : evolucoes) {
 			switch (evolucao) {
-				case "NUVEM_GAFANHOTOS":	this.cbTemploLancamentos.addItem("Nuvem de gafanhotos");	break;
-				case "MORTE_PRIMOGENITOS":	this.cbTemploLancamentos.addItem("Morte dos primogênitos");	break;
-				case "CHUVA_PEDRAS": 		this.cbTemploLancamentos.addItem("Chuva de pedras");
+				case "NUVEM_GAFANHOTOS" -> this.cbTemploLancamentos.addItem("Nuvem de gafanhotos");
+				case "MORTE_PRIMOGENITOS" -> this.cbTemploLancamentos.addItem("Morte dos primogênitos");
+				case "CHUVA_PEDRAS" -> this.cbTemploLancamentos.addItem("Chuva de pedras");
 			}
 		}
 	}
@@ -935,29 +883,35 @@ public class Tela extends JFrame {
 		}
 	}
 
-	private void comandoDestruirJogo() {
-		this.limparJogadores();
-		this.limparMensagens();
-		this.situacaoInicio = SituacaoInicio.INICIAL_CRIAR;
-		this.habilitarInicio();
+	private void comandoSolicitarInicioJogo() {
+		this.gameManager.solicitarInicioJogo();
 	}
 
-	private void comandoIniciarJogo() {
-		boolean retorno = true; // retorno da iniciação do jogo
-		if (retorno) {
-			this.situacaoInicio = SituacaoInicio.CRIAR_INICIADO;
-			this.habilitarInicio();
-			this.tpJogo.setSelectedIndex(1);
-			this.limparInimigos();
-			this.adicionarInimigo("Inimigo-Persa");
+	private void comandoSolicitarEncerramentoJogo() {
+		this.gameManager.solicitarEncerramentoJogo();
+	}
+
+	public void comandoIniciarJogo(Vila vila) {
+		this.vila = vila;
+		this.situacaoInicio = SituacaoInicio.CRIAR_INICIADO;
+		this.habilitarInicio();
+		this.tpJogo.setSelectedIndex(1);
+		this.limparInimigos();
+		// Adiciona jogadores da partida na lista de inimigos
+		for (int j = 0; j < tmJogadores.getRowCount(); j++) {
+			String nomeJogador = tmJogadores.getValueAt(j, 0).toString();
+			if(!nomeJogador.equals(tfNome.getText())) {
+				this.adicionarInimigo(nomeJogador);
+			}
 		}
 	}
 
-	private void comandoEncerrarJogo() {
+	public void comandoEncerrarJogo() {
 		this.limparJogadores();
 		this.limparMensagens();
 		this.situacaoInicio = SituacaoInicio.INICIAL_CRIAR;
 		this.habilitarInicio();
+		this.tpJogo.setSelectedIndex(0);
 	}
 
 	private void comandoConectar(String nome, String civilizacao, String ipServidor) {
@@ -974,8 +928,6 @@ public class Tela extends JFrame {
 		if (retorno) {
 			this.adicionarJogador(nome, civilizacao, ipServidor, "aguardando iniciar...");
 			this.situacaoInicio = SituacaoInicio.CONECTADO;
-			this.habilitarInicio();
-			this.tpJogo.setSelectedIndex(1);
 		}
 	}
 
@@ -1049,7 +1001,11 @@ public class Tela extends JFrame {
 	}
 
 	public void comandoTemploLancar(String strPraga, String strInimigo) {
-		System.out.println("comandoTemploLancar("+ strPraga +","+ strInimigo +");");
+		this.vila.comandoTemploLancar(strPraga, strInimigo);
+	}
+
+	public void comandoVitoria(String nomeJogador) {
+		this.mostrarMensagemVitoria(String.format("Jogador %s ganhou a partida!", nomeJogador));
 	}
 
 }

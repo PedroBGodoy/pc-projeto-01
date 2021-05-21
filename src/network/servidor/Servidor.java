@@ -9,13 +9,10 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class Servidor {
+    private final ConcurrentHashMap<Integer, Cliente> clientes;
+    private final ExecutorService poolClientes;
 
-    private ServerSocket server;
-
-    private ConcurrentHashMap<Integer, Cliente> clientes;
-    private ExecutorService poolClientes;
-
-    private int porta;
+    private final int porta;
 
     public Servidor(int porta) {
         this.porta = porta;
@@ -23,19 +20,12 @@ public class Servidor {
         this.poolClientes = Executors.newCachedThreadPool();
     }
 
-    public int getPorta() {
-        return this.porta;
-    }
-    public void setPorta(int porta) {
-        this.porta = porta;
-    }
-
     public void iniciar() {
         Socket socket;
 
         try {
-            this.server = new ServerSocket(this.getPorta());
-            System.out.println("Servidor iniciado na porta: " + this.getPorta());
+            ServerSocket server = new ServerSocket(this.porta);
+            System.out.println("Servidor iniciado na porta: " + this.porta);
             while (true) {
                 socket = server.accept();
                 Cliente cliente = new Cliente(socket, this.clientes.size()+1, this);
@@ -65,6 +55,7 @@ public class Servidor {
         Cliente cliente = this.getClientById(id);
         if(cliente == null) {
             System.out.println("Erro ao tentar enviar mensagem ao cliente " + id);
+            return;
         }
         cliente.enviarComando(comando);
     }
