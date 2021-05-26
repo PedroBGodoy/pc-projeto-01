@@ -12,12 +12,14 @@ public class Fazenda {
     private final ArrayList<Aldeao> aldeaos;
 
     private Semaphore semaphore;
+    private boolean ativa;
 
     public Fazenda(int id, Vila vila) {
         this.id = id;
         this.aldeaos = new ArrayList<>();
         this.vila = vila;
         this.semaphore = new Semaphore(5);
+        this.ativa = false;
 
         Tela.i.adicionarFazenda(String.valueOf(id), "");
     }
@@ -27,6 +29,9 @@ public class Fazenda {
     }
 
     public void cultivar(Aldeao aldeao) {
+        if(!this.ativa) {
+            return;
+        }
         try {
             // Tenta iniciar cultivo, caso limite tenha excedido aguardar
             this.semaphore.acquire();
@@ -42,6 +47,10 @@ public class Fazenda {
             // Liberar espaço fazenda
             this.semaphore.release();
         }
+    }
+
+    public void destruirFazenda() {
+        this.ativa = false;
     }
 
     private synchronized void adicionarAldeao(Aldeao aldeao) {

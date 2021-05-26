@@ -22,6 +22,10 @@ public class Aldeao extends Thread {
         this.acoes = new ArrayBlockingQueue<>(1);
     }
 
+   public boolean estaVivo() {
+        return this.vivo;
+   }
+
     public int getID() {
         return this.id;
     }
@@ -158,6 +162,11 @@ public class Aldeao extends Thread {
         if(templo == null) return;
         templo.registrarSacrificio();
         Tela.i.mostrarAldeao(this.getID(), "sacrificado");
+        this.vivo = false;
+    }
+
+    public void matar() {
+        Tela.i.mostrarAldeao(this.getID(), "morto");
         this.vivo = false;
     }
 }

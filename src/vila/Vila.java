@@ -119,10 +119,28 @@ public class Vila {
     }
 
     public void comandoTemploLancar(String strPraga, String strInimigo) {
+        int qtdFe = 1000;
+        String codigoAtaque = "";
+
         switch (strPraga) {
-            case "Nuvem de gafanhotos" -> this.gameManager.enviarAtaque("ATAQUE_NUVEM_GAFANHOTOS", strInimigo);
-            case "Morte dos primogênitos" -> this.gameManager.enviarAtaque("ATAQUE_MORTE_PRIMOGENITOS", strInimigo);
-            case "Chuva de pedras" -> this.gameManager.enviarAtaque("ATAQUE_CHUVA_PEDRAS", strInimigo);
+            case "Nuvem de gafanhotos" -> {
+                codigoAtaque = "ATAQUE_NUVEM_GAFANHOTOS";
+                qtdFe = this.props.templo.ataqueNuvemDeGafanhotos.getCustoFe();
+            }
+            case "Morte dos primogênitos" -> {
+                codigoAtaque = "ATAQUE_MORTE_PRIMOGENITOS";
+                qtdFe = this.props.templo.ataqueMorteDosPrimogenitos.getCustoFe();;
+            }
+            case "Chuva de pedras" -> {
+                codigoAtaque = "ATAQUE_CHUVA_PEDRAS";
+                qtdFe = this.props.templo.ataqueChuvaDePedras.getCustoFe();;
+            }
+        }
+
+        if(this.templo.consumirFe(qtdFe)) {
+            this.gameManager.enviarAtaque(codigoAtaque, strInimigo);
+        } else {
+            Tela.i.mostrarMensagemErro("Alerta Vila!", "Você não tem fé o suficiente!");
         }
     }
 
@@ -263,25 +281,103 @@ public class Vila {
 
     public void receberAtaque(String codigoAtaque) {
         switch (codigoAtaque) {
-            case "ATAQUE_NUVEM_GAFANHOTOS" -> this.destruirMetadeFazendas();
-            case "ATAQUE_MORTE_PRIMOGENITOS" -> this.matarMetadeAldeoes();
-            case "ATAQUE_CHUVA_PEDRAS" -> this.receberChuvaDePedra();
+            case "ATAQUE_NUVEM_GAFANHOTOS" -> {
+                if(this.templo.temProtecaoNuvemGafanhotos()) {
+                    Tela.i.mostrarMensagem("Proteção!", "Você foi protegido de uma nuvem de gafanhotos!");
+                    this.templo.setProtecaoNuvemGafanhotos(false);
+                    return;
+                }
+                this.destruirMetadeFazendas();
+                Tela.i.mostrarMensagem("Ataque", "Metade das suas fazendas foram destruidas. Você foi atacado com Chuva de Gafanhotos!");
+            }
+            case "ATAQUE_MORTE_PRIMOGENITOS" -> {
+                if(this.templo.temProtecaoMortePrimogenitos()) {
+                    Tela.i.mostrarMensagem("Proteção!", "Você foi protegido da morte dos primogenitos!");
+                    this.templo.setProtecaoMortePrimogenitos(false);
+                    return;
+                }
+                this.matarMetadeAldeoes();
+                Tela.i.mostrarMensagem("Ataque", "Metade dos seus aldeoes morreram. Você foi atacado com Morte dos Primogenitos!");
+            }
+            case "ATAQUE_CHUVA_PEDRAS" -> {
+                if(this.templo.temProtecaoChuvaDePedras()) {
+                    Tela.i.mostrarMensagem("Proteção!", "Você foi protegido de uma chuva de pedras!");
+                    this.templo.setProtecaoChuvaDePedras(false);
+                    return;
+                }
+                this.receberChuvaDePedra();
+                Tela.i.mostrarMensagem("Ataque", "Você foi atacado com Chuva de Pedras!");
+            }
         }
     }
 
     private void destruirMetadeFazendas() {
-        System.out.println("destruirMetadeFazendas");
         // A fazer
+        int qtdFazendas = this.fazendas.size() / 2;
+        for (int i = 0; i < qtdFazendas; i++) {
+            // Identifica index da ultima fazenda da lista
+            int indexFazenda = this.fazendas.size()-1;
+            Fazenda fazenda = this.fazendas.get(indexFazenda);
+
+            // Destruir Fazenda
+            fazenda.destruirFazenda();
+            this.fazendas.remove(fazenda);
+            Tela.i.destruirFazenda(fazenda.getID());
+        }
+    }
+
+    private void destruirMetadeMinaDeOuro() {
+        // A fazer
+        int qtdMinas = this.minas.size() / 2;
+        for (int i = 0; i < qtdMinas; i++) {
+            // Identifica index da ultima mina da lista
+            int indexMina = this.minas.size()-1;
+            Mina mina = this.minas.get(indexMina);
+
+            // Destruir Fazenda
+            mina.destruirMina();
+            this.minas.remove(mina);
+            Tela.i.destruirMina(mina.getID());
+        }
     }
 
     private void matarMetadeAldeoes() {
-        System.out.println("matarMetadeAldeoes");
         // A fazer
+        int qtdAldeoes = this.quantidadeAldeoesVivos() / 2;
+        for (int i = 0; i < qtdAldeoes; i++) {
+            Aldeao aldeao = this.buscarUltimoAldeaoListaVivo();
+            if(aldeao == null) {
+                break;
+            }
+
+            // Destruir Fazenda
+            aldeao.matar();
+        }
+    }
+
+    private int quantidadeAldeoesVivos() {
+        int quantidade = 0;
+        for (Aldeao aldeao : this.aldeaos) {
+            if (aldeao.estaVivo()) quantidade++;
+        }
+        return quantidade;
+    }
+
+    private Aldeao buscarUltimoAldeaoListaVivo() {
+        for (int i = this.aldeaos.size(); i > 0; i--) {
+            Aldeao aldeao = this.aldeaos.get(i-1);
+            if(aldeao.estaVivo()) {
+                return aldeao;
+            }
+        }
+        return null;
     }
 
     private void receberChuvaDePedra() {
-        System.out.println("receberChuvaDePedra");
-        // A fazer
+        this.matarMetadeAldeoes();
+        this.destruirMetadeFazendas();
+        this.destruirMetadeMinaDeOuro();
+        this.maravilha.destruirMetade();
     }
 
 }

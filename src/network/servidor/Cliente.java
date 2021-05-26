@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.Socket;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Collection;
 import java.util.Formatter;
 import java.util.Scanner;
@@ -11,6 +13,7 @@ import java.util.Scanner;
 public class Cliente implements Runnable {
     public int id;
     public String nome;
+    public String civilizacao;
 
     private Socket socket;
     private Scanner entrada;
@@ -61,7 +64,7 @@ public class Cliente implements Runnable {
     }
 
     private void anunciarConexao() {
-        this.servidor.enviarComandoTodosExeto(String.format("NOVO_JOGADOR#%d#%s", this.id, this.nome), this.id);
+        this.servidor.enviarComandoTodosExeto(String.format("NOVO_JOGADOR#%d#%s#%s#%s", this.id, this.nome, this.civilizacao, this.socket.getInetAddress().getHostName()), this.id);
     }
 
     private void desconectar() {
@@ -74,13 +77,15 @@ public class Cliente implements Runnable {
         Collection<Cliente> clientes = this.servidor.getClientes();
         clientes.forEach(cliente -> {
             if(cliente.id != this.id) {
-                this.servidor.enviarComando(String.format("NOVO_JOGADOR#%d#%s", cliente.id, cliente.nome), this.id);
+                this.servidor.enviarComando(String.format("NOVO_JOGADOR#%d#%s#%s#%s", cliente.id, cliente.nome, cliente.civilizacao, cliente.socket.getInetAddress().getHostName()), this.id);
             }
         });
     }
 
     private void enviarMensagem(String mensagem) {
-        this.servidor.enviarComandoTodos(String.format("MSG#%s: %s", this.nome, mensagem));
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("HH:mm");
+        LocalDateTime now = LocalDateTime.now();
+        this.servidor.enviarComandoTodos(String.format("MSG#%s [%s] [%s]: %s", this.nome, dtf.format(now), this.civilizacao, mensagem));
     }
 
     private void iniciarJogo() {
@@ -97,7 +102,7 @@ public class Cliente implements Runnable {
 
     private void tratarComando(Integer id, String comando) {
         System.out.println("Comando recebido: " + comando);
-        String[] parametros = comando.split("#", 2);
+        String[] parametros = comando.split("#");
         if(parametros.length == 0) {
             System.out.println("[Servidor] Comando inválido. Quantidade de parametros invalido!");
             return;
@@ -107,6 +112,7 @@ public class Cliente implements Runnable {
             // ----- CONEXAO -----
             case "CONECTADO" -> {
                 this.nome = parametros[1];
+                this.civilizacao = parametros[2];
                 this.anunciarConexao();
                 this.enviarListaJogadores();
             }

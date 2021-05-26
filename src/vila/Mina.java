@@ -10,6 +10,7 @@ public class Mina {
     private int id;
     private Vila vila;
     private final ArrayList<Aldeao> aldeaos;
+    private boolean ativa;
 
     private Semaphore semaphore;
 
@@ -18,6 +19,7 @@ public class Mina {
         this.aldeaos = new ArrayList<>();
         this.vila = vila;
         this.semaphore = new Semaphore(this.vila.props.mina.getQtdProducaoSimultanea());
+        this.ativa = false;
 
         Tela.i.adicionarMinaOuro(String.valueOf(id), "");
     }
@@ -27,6 +29,9 @@ public class Mina {
     }
 
     public void minerar(Aldeao aldeao) {
+        if(!this.ativa) {
+            return;
+        }
         try {
             // Tenta iniciar mineracao, caso limite tenha excedido aguardar
             this.semaphore.acquire();
@@ -66,4 +71,9 @@ public class Mina {
     public void evoluir(int aumento) {
         this.semaphore.release(aumento);
     }
+
+    public void destruirMina() {
+        this.ativa = false;
+    }
+
 }

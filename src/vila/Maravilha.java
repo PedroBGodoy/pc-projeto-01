@@ -30,6 +30,11 @@ public class Maravilha {
         }
     }
 
+    public void destruirMetade() {
+        this.tijolos -= this.tijolos / 2;
+        Tela.i.mostrarMaravilha(this.tijolos);
+    }
+
     public boolean pendenteFinalizacao() {
         return this.tijolos < this.vila.props.maravilha.getTijolosNecessarios();
     }

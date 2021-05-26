@@ -10,7 +10,7 @@ public class GameManager {
 
     private Vila vila;
 
-    public boolean criarJogo(String ip, int porta, String nome) {
+    public boolean criarJogo(String ip, int porta, String nome, String civilizacao) {
         this.iniciarServidor();
 
         try {
@@ -19,7 +19,7 @@ public class GameManager {
             e.printStackTrace();
             return false;
         }
-        this.conectarServidor(ip, porta, nome);
+        this.conectarServidor(ip, porta, nome, civilizacao);
         return true;
     }
 
@@ -31,9 +31,9 @@ public class GameManager {
         serverThread.start();
     }
 
-    public boolean conectarServidor(String ip, int porta, String nome) {
+    public boolean conectarServidor(String ip, int porta, String nome, String civilizacao) {
         this.cliente = new Cliente(this);
-        cliente.conectar(ip, porta, nome);
+        cliente.conectar(ip, porta, nome, civilizacao);
         return true;
     }
 

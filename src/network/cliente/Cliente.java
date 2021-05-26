@@ -17,7 +17,7 @@ public class Cliente {
         this.gameManager = gameManager;
     }
 
-    public void conectar(String ip, int porta, String nome) {
+    public void conectar(String ip, int porta, String nome, String civilizacao) {
         try {
             Socket socket = new Socket(ip, porta);
             this.entrada = new BufferedReader(new InputStreamReader(socket.getInputStream()));
@@ -39,7 +39,7 @@ public class Cliente {
             listener.start();
 
             // Envia pacote de conexão
-            this.enviarComando("CONECTADO#"+nome);
+            this.enviarComando(String.format("CONECTADO#%s#%s", nome, civilizacao));
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -47,6 +47,7 @@ public class Cliente {
     }
 
     private void tratarComando(String comando) {
+        System.out.println("Comando recebido: " + comando);
         String[] parametros = comando.split("#");
         if(parametros.length == 0) {
             System.out.println("[Cliente] Comando inválido");
@@ -57,7 +58,7 @@ public class Cliente {
             // ----- CONEXAO -----
             case "NOVO_JOGADOR" -> {
                 Tela.i.adicionarMensagem(parametros[2] + " entrou");
-                Tela.i.adicionarJogador(parametros[2], parametros[2], parametros[2], parametros[2]);
+                Tela.i.adicionarJogador(parametros[2], parametros[3], parametros[4], "aguardando inicio da partida...");
             }
             case "DESCONECTADO" -> {
                 Tela.i.adicionarMensagem(parametros[2] + " saiu");

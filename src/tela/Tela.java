@@ -775,6 +775,10 @@ public class Tela extends JFrame {
 		JOptionPane.showMessageDialog(null, mensagem, "VITÓRIA", JOptionPane.INFORMATION_MESSAGE);
 	}
 
+	public void mostrarMensagem(String titulo, String mensagem) {
+		JOptionPane.showMessageDialog(null, mensagem, titulo, JOptionPane.WARNING_MESSAGE);
+	}
+
 	public void adicionarAldeao(String numero, String acao) {
 		String[] linha = {numero, acao};
 		this.tmAldeoes.addRow(linha);
@@ -794,6 +798,11 @@ public class Tela extends JFrame {
 		this.tblFazendas.setValueAt(aldeoes, fazenda-1, 1);
 	}
 
+	public void destruirFazenda(int fazenda) {
+		this.tmFazendas.removeRow(fazenda-1);
+		this.cbFazenda.removeItemAt(fazenda-1);
+	}
+
 	public void mostrarComida(int qtd) {
 		this.lblComida.setText(NumberFormat.getNumberInstance().format(qtd));
 	}
@@ -806,6 +815,11 @@ public class Tela extends JFrame {
 
 	public void mostrarMinaOuro(int minaOuro, String aldeoes) {
 		this.tblMinasOuro.setValueAt(aldeoes, minaOuro-1, 1);
+	}
+
+	public void destruirMina(int mina) {
+		this.tmMinasOuro.removeRow(mina-1);
+		this.cbMinaOuro.removeItemAt(mina-1);
 	}
 
 	public void mostrarOuro(int qtd) {
@@ -875,7 +889,7 @@ public class Tela extends JFrame {
 			mostrarMensagemErro("Erro", "Informe um nome para o jogador");
 			return;
 		}
-		retorno = this.gameManager.criarJogo("127.0.0.1", 7777, nome); // retorno da criação do jogo
+		retorno = this.gameManager.criarJogo("127.0.0.1", 7777, nome, civilizacao); // retorno da criação do jogo
 		if (retorno) {
 			this.adicionarJogador(nome, civilizacao, "127.0.0.1", "aguardando jogadores...");
 			this.situacaoInicio = SituacaoInicio.CRIAR_CRIADO;
@@ -903,6 +917,7 @@ public class Tela extends JFrame {
 			if(!nomeJogador.equals(tfNome.getText())) {
 				this.adicionarInimigo(nomeJogador);
 			}
+//			this.mostrarSituacaoJogador(j, "Jogando...");
 		}
 	}
 
@@ -924,10 +939,11 @@ public class Tela extends JFrame {
 			mostrarMensagemErro("Erro", "Informe o IP do computador que criou o jogo");
 			return;
 		}
-		retorno = this.gameManager.conectarServidor(ipServidor, 7777, nome); // retorno da conexão
+		retorno = this.gameManager.conectarServidor(ipServidor, 7777, nome, civilizacao); // retorno da conexão
 		if (retorno) {
 			this.adicionarJogador(nome, civilizacao, ipServidor, "aguardando iniciar...");
 			this.situacaoInicio = SituacaoInicio.CONECTADO;
+			this.habilitarInicio();
 		}
 	}
 

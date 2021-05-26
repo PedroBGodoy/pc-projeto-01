@@ -14,6 +14,10 @@ public class PropriedadesTemplo extends BasePropriedades {
     public EvProtecaoMortePrimogenitos evProtecaoMortePrimogenitos;
     public EvProtecaoChuvaPedras evProtecaoChuvaPedras;
 
+    public AtaqueNuvemDeGafanhotos ataqueNuvemDeGafanhotos;
+    public AtaqueMorteDosPrimogenitos ataqueMorteDosPrimogenitos;
+    public AtaqueChuvaDePedras ataqueChuvaDePedras;
+
     public PropriedadesTemplo() {
         this.setCustoComida(Constantes.CUSTO_COMIDA_TEMPLO);
         this.setCustoOuro(Constantes.CUSTO_OURO_TEMPLO);
@@ -30,6 +34,10 @@ public class PropriedadesTemplo extends BasePropriedades {
         this.evProtecaoNuvemGafanhoto = new EvProtecaoNuvemGafanhoto();
         this.evProtecaoMortePrimogenitos = new EvProtecaoMortePrimogenitos();
         this.evProtecaoChuvaPedras = new EvProtecaoChuvaPedras();
+
+        this.ataqueNuvemDeGafanhotos = new AtaqueNuvemDeGafanhotos();
+        this.ataqueMorteDosPrimogenitos = new AtaqueMorteDosPrimogenitos();
+        this.ataqueChuvaDePedras = new AtaqueChuvaDePedras();
     }
 
     public int getProducaoPorCiclo() {

@@ -11,11 +11,11 @@ public class Constantes {
     public static final int HORA_BASE = 10;
 
     // PROPRIEDADES INICIO JOGO
-    public static final int QTD_OURO_INICIAL = 100;
-    public static final int QTD_COMIDA_INICIAL = 150;
-    public static final int QTD_ALDEOES_INICIAL = 5;
-    public static final int QTD_FAZENDAS_INICIAL = 1;
-    public static final int QTD_MINAS_INICIAL = 1;
+    public static final int QTD_OURO_INICIAL = 10000;
+    public static final int QTD_COMIDA_INICIAL = 15000;
+    public static final int QTD_ALDEOES_INICIAL = 50;
+    public static final int QTD_FAZENDAS_INICIAL = 10;
+    public static final int QTD_MINAS_INICIAL = 10;
 
     // ALDEAO
     public static final int TEMPO_PRODUCAO_ALDEAO_MULT = 20;
@@ -75,6 +75,11 @@ public class Constantes {
 
     public static final int CUSTO_FE_EVOLUCAO_PROTECAO_CHUVA_PEDRAS = 7000;
     public static final int TEMPO_EVOLUCAO_PROTECAO_CHUVA_PEDRAS_MULT = 700;
+
+    // ATAQUES
+    public static final int CUSTO_FE_ATAQUE_NUVEM_GAFANHOTOS = 500;
+    public static final int CUSTO_FE_ATAQUE_MORTE_PRIMOGENITOS = 750;
+    public static final int CUSTO_FE_ATAQUE_CHUVA_PEDRAS = 10000;
 
     // MARAVILHA
     public static final int QTD_TIJOLOS_NECESSARIOS = 100000;

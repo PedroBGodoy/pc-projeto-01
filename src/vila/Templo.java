@@ -13,6 +13,10 @@ public class Templo {
     private final ArrayList<String> ataques;
     private PropriedadesTemplo props;
 
+    private boolean protecaoNuvemGafanhotos;
+    private boolean protecaoMortePrimogenitos;
+    private boolean protecaoChuvaDePedras;
+
     public Templo(Vila vila) {
         this.vila = vila;
         this.estado = EstadoTemplo.PARADO;
@@ -99,25 +103,28 @@ public class Templo {
     }
 
     private void evoluirProtecaoNuvemDeGafanhotos() {
-        int custoFe = this.props.evProtecaoChuvaPedras.getCustoFe();
-        int custoTempo = this.props.evChuvaPedras.getTempoEvolucao();
+        int custoFe = this.props.evProtecaoNuvemGafanhoto.getCustoFe();
+        int custoTempo = this.props.evNuvemGafanhoto.getTempoEvolucao();
         this.evoluir(custoFe, custoTempo, "Proteção contra nuvem de gafanhotos");
+        this.protecaoNuvemGafanhotos = true;
     }
 
     private void evoluirProtecaoMorteDosPrimogenitos() {
         int custoFe = this.props.evProtecaoMortePrimogenitos.getCustoFe();
         int custoTempo = this.props.evProtecaoMortePrimogenitos.getTempoEvolucao();
         this.evoluir(custoFe, custoTempo, "Proteção contra morte dos primogênitos");
+        this.protecaoMortePrimogenitos = true;
     }
 
     private void evoluirProtecaoChuvaDePedras() {
         int custoFe = this.props.evProtecaoChuvaPedras.getCustoFe();
         int custoTempo = this.props.evProtecaoChuvaPedras.getTempoEvolucao();
         this.evoluir(custoFe, custoTempo, "Proteção contra chuva de pedras");
+        this.protecaoChuvaDePedras = true;
     }
 
     private boolean evoluir(int custoFe, int tempo, String evolucao) {
-        if(this.fe < custoFe) {
+        if(!this.consumirFe(custoFe)) {
             Tela.i.mostrarMensagemErro("Alerta Templo", "Você não possui fé o suficiente!");
             return false;
         }
@@ -131,5 +138,38 @@ public class Templo {
         Tela.i.mostrarTemplo("parado", Color.WHITE);
         this.estado = EstadoTemplo.PARADO;
         return true;
+    }
+
+    public boolean consumirFe(int quantidade) {
+        if(this.fe < quantidade) {
+            return false;
+        }
+        this.fe -= quantidade;
+        Tela.i.mostrarOferendaFe(this.fe);
+        return true;
+    }
+
+    public boolean temProtecaoNuvemGafanhotos() {
+        return protecaoNuvemGafanhotos;
+    }
+
+    public void setProtecaoNuvemGafanhotos(boolean protecaoNuvemGafanhotos) {
+        this.protecaoNuvemGafanhotos = protecaoNuvemGafanhotos;
+    }
+
+    public boolean temProtecaoMortePrimogenitos() {
+        return protecaoMortePrimogenitos;
+    }
+
+    public void setProtecaoMortePrimogenitos(boolean protecaoMortePrimogenitos) {
+        this.protecaoMortePrimogenitos = protecaoMortePrimogenitos;
+    }
+
+    public boolean temProtecaoChuvaDePedras() {
+        return protecaoChuvaDePedras;
+    }
+
+    public void setProtecaoChuvaDePedras(boolean protecaoChuvaDePedras) {
+        this.protecaoChuvaDePedras = protecaoChuvaDePedras;
     }
 }
